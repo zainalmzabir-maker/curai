@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Minit Curai SMK Kamarul Ariffin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Times New Roman', Times, serif, Arial, sans-serif;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .form-card, .preview-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        /* A4 Preview Styling */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            font-size: 12pt;
+            color: #000;
+            line-height: 1.5;
+        }
+        .document-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 16pt;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .document-subtitle {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .minit-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .minit-table td {
+            padding: 6px 4px;
+            vertical-align: top;
+        }
+        .col-num {
+            width: 30px;
+            font-weight: bold;
+        }
+        .col-label {
+            width: 220px;
+            font-weight: bold;
+        }
+        .col-sep {
+            width: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .col-val {
+            word-break: break-word;
+        }
+        .section-header {
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        .content-box {
+            min-height: 80px;
+            white-space: pre-wrap;
+            margin-bottom: 15px;
+            padding-left: 5px;
+        }
+        .signature-section {
+            margin-top: 40px;
+            page-break-inside: avoid;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            width: 250px;
+            margin-top: 50px;
+            margin-bottom: 5px;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .a4-page, .a4-page * {
+                visibility: visible;
+            }
+            .a4-page {
+                position: absolute;
+                left: 0;
+                top: 0;
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                padding: 10mm;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container app-container">
+    <div class="row no-print">
+        <div class="col-12 text-center mb-4">
+            <h2>Sistem Pengurusan Minit Curai</h2>
+            <p class="text-muted">SMK Kamarul Ariffin | Pangkalan Data Google Sheets & GitHub Pages</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Borang Pengisian -->
+        <div class="col-lg-6 no-print">
+            <div class="form-card">
+                <h4 class="mb-3">Borang Pengisian Minit Curai</h4>
+                <form id="minitForm">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Pegawai</label>
+                        <input type="text" class="form-control" id="namaPegawai" required oninput="updatePreview()">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Jawatan</label>
+                        <input type="text" class="form-control" id="jawatan" required oninput="updatePreview()">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tajuk / Perkara</label>
+                        <input type="text" class="form-control" id="tajuk" required oninput="updatePreview()">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tarikh</label>
+                            <input type="date" class="form-control" id="tarikh" required oninput="updatePreview()">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Masa</label>
+                            <input type="text" class="form-control" id="masa" placeholder="Cth: 8.00 pagi - 5.00 petang" required oninput="updatePreview()">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tempat</label>
+                        <input type="text" class="form-control" id="tempat" required oninput="updatePreview()">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Anjuran</label>
+                        <input type="text" class="form-control" id="anjuran" required oninput="updatePreview()">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pengerusi</label>
+                        <input type="text" class="form-control" id="pengerusi" required oninput="updatePreview()">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Kehadiran</label>
+                        <input type="text" class="form-control" id="kehadiran" placeholder="Cth: Rujuk senarai / Semua pegawai berkenaan" required oninput="updatePreview()">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">10. Butiran Mesyuarat / Taklimat / Perbincangan / Kursus</label>
+                        <textarea class="form-control" id="butiran" rows="5" required oninput="updatePreview()"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">11. Implikasi Kepada SMK Kamarul Ariffin</label>
+                        <textarea class="form-control" id="implikasi" rows="3" required oninput="updatePreview()"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">12. Tindakan Susulan SMK Kamarul Ariffin</label>
+                        <textarea class="form-control" id="tindakan" rows="3" required oninput="updatePreview()"></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-success me-md-2" onclick="saveDataToGoogleSheets()">Simpan ke Google Sheets</button>
+                        <button type="button" class="btn btn-primary" onclick="window.print()">Cetak / Simpan PDF (A4)</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Paparan A4 (Live Preview & Print) -->
+        <div class="col-lg-6">
+            <div class="preview-card p-0 overflow-auto">
+                <div class="p-3 bg-secondary text-white no-print d-flex justify-content-between align-items-center">
+                    <span>Pratonton Dokumen A4</span>
+                    <button class="btn btn-light btn-sm" onclick="window.print()">Cetak A4</button>
+                </div>
+                
+                <div class="p-4">
+                    <div class="a4-page" id="printArea">
+                        <div class="document-title">SEKOLAH MENENGAH KEBANGSAAN KAMARUL ARIFFIN</div>
+                        <div class="document-subtitle">MINIT CURAI</div>
+
+                        <table class="minit-table">
+                            <tr>
+                                <td class="col-num">1.</td>
+                                <td class="col-label">NAMA PEGAWAI</td>
+                                <td class="col-sep">:</td>
+                                <td class="col-val" id="prev-nama">-</td>
+                            </tr>
+                            <tr>
+                                <td class="col-num">2.</td>
+                                <td class="col-label">JAWATAN</td>
+                                <td class="col-sep">:</td>
+                                <td class="col-val" id="prev-jawatan">-</td>
+                            </tr>
+                            <tr>
+                                <td class="col-num">3.</td>
+                                <td class="col-label">TAJUK / PERKARA</td>
+                                <td class="col-sep">:</td>
+                                <td class="col-val" id="prev-tajuk">-</td>
+                            </tr>
+                            <tr>
+                                <td class="col-num">4.</td>
+                                <td class="col-label">TARIKH</td>
+                                <td class="col-sep">:</td>
+                                <td class="col-val" id="prev-tarikh">-</td>
+                            </tr>
+                            <tr>
+                                <td class="col-num">5.</td>
+                                <td class="col-label">MASA</td>
+                                <td class="col-sep">:</td>
+                                <td class="col-val" id="prev-masa">-</td>
+                            </tr>
+                            <tr>
+                                <td class="col-num">6.</td>
+                                <td class="col-label">TEMPAT</td>
+                                <td class="col-sep">:</td>
+                                <td class="col-val" id="prev-tempat">-</td>
+                            </tr>
+                            <tr>
+                                <td class="col-num">7.</td>
+                                <td class="col-label">ANJURAN</td>
+                                <td class="col-sep">:</td>
+                                <td class="col-val" id="prev-anjuran">-</td>
+                            </tr>
+                            <tr>
+                                <td class="col-num">8.</td>
+                                <td class="col-label">PENGERUSI</td>
+                                <td class="col-sep">:</td>
+                                <td class="col-val" id="prev-pengerusi">-</td>
+                            </tr>
+                            <tr>
+                                <td class="col-num">9.</td>
+                                <td class="col-label">KEHADIRAN</td>
+                                <td class="col-sep">:</td>
+                                <td class="col-val" id="prev-kehadiran">-</td>
+                            </tr>
+                        </table>
+
+                        <div class="section-header">10. Butiran Mesyuarat/Taklimat/Perbincangan/Kursus</div>
+                        <div class="content-box" id="prev-butiran">10.1 </div>
+
+                        <div class="section-header">11. Implikasi Kepada SMK Kamarul Ariffin</div>
+                        <div class="content-box" id="prev-implikasi">-</div>
+
+                        <div class="section-header">12. Tindakan Susulan SMK Kamarul Ariffin</div>
+                        <div class="content-box" id="prev-tindakan">12.1 </div>
+
+                        <div class="signature-section">
+                            <div class="signature-line"></div>
+                            <div>Tandatangan Pegawai</div>
+                            <div style="margin-top: 10px;">Nama: <span id="prev-sig-nama">(                        )</span></div>
+                            <div>Tarikh: <span id="prev-sig-tarikh">__________________</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // URL Web App Google Apps Script yang dikemaskini
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4J5L3v4oYDfTRVkfI839jBqrF24pgkjoggsW7oBS14FFDlgo3fOVqwWNA9TDCC74d/exec";
+
+    function updatePreview() {
+        const nama = document.getElementById('namaPegawai').value || '-';
+        const jawatan = document.getElementById('jawatan').value || '-';
+        const tajuk = document.getElementById('tajuk').value || '-';
+        const tarikh = document.getElementById('tarikh').value || '-';
+        const masa = document.getElementById('masa').value || '-';
+        const tempat = document.getElementById('tempat').value || '-';
+        const anjuran = document.getElementById('anjuran').value || '-';
+        const pengerusi = document.getElementById('pengerusi').value || '-';
+        const kehadiran = document.getElementById('kehadiran').value || '-';
+        const butiran = document.getElementById('butiran').value || '';
+        const implikasi = document.getElementById('implikasi').value || '-';
+        const tindakan = document.getElementById('tindakan').value || '';
+
+        document.getElementById('prev-nama').innerText = nama;
+        document.getElementById('prev-jawatan').innerText = jawatan;
+        document.getElementById('prev-tajuk').innerText = tajuk;
+        document.getElementById('prev-tarikh').innerText = tarikh;
+        document.getElementById('prev-masa').innerText = masa;
+        document.getElementById('prev-tempat').innerText = tempat;
+        document.getElementById('prev-anjuran').innerText = anjuran;
+        document.getElementById('prev-pengerusi').innerText = pengerusi;
+        document.getElementById('prev-kehadiran').innerText = kehadiran;
+        
+        document.getElementById('prev-butiran').innerText = "10.1 " + butiran;
+        document.getElementById('prev-implikasi').innerText = implikasi;
+        document.getElementById('prev-tindakan').innerText = "12.1 " + tindakan;
+
+        document.getElementById('prev-sig-nama').innerText = "(" + nama + ")";
+        document.getElementById('prev-sig-tarikh').innerText = tarikh;
+    }
+
+    function saveDataToGoogleSheets() {
+        const data = {
+            namaPegawai: document.getElementById('namaPegawai').value,
+            jawatan: document.getElementById('jawatan').value,
+            tajuk: document.getElementById('tajuk').value,
+            tarikh: document.getElementById('tarikh').value,
+            masa: document.getElementById('masa').value,
+            tempat: document.getElementById('tempat').value,
+            anjuran: document.getElementById('anjuran').value,
+            pengerusi: document.getElementById('pengerusi').value,
+            kehadiran: document.getElementById('kehadiran').value,
+            butiran: document.getElementById('butiran').value,
+            implikasi: document.getElementById('implikasi').value,
+            tindakan: document.getElementById('tindakan').value
+        };
+
+        if(!data.namaPegawai || !data.tajuk) {
+            alert("Sila lengkapkan maklumat utama sekurang-kurangnya Nama dan Tajuk.");
+            return;
+        }
+
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerText = "Menyimpan...";
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            alert("Data berjaya disimpan ke Google Sheets!");
+            btn.disabled = false;
+            btn.innerText = "Simpan ke Google Sheets";
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Ralat semasa menyimpan data. Sila cuba lagi.");
+            btn.disabled = false;
+            btn.innerText = "Simpan ke Google Sheets";
+        });
+    }
+</script>
+
+</body>
+</html>
