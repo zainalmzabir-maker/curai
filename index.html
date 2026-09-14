@@ -28,7 +28,7 @@
         .signature-container { display: flex; justify-content: space-between; margin-top: 30px; page-break-inside: avoid; gap: 20px; }
         .signature-box { width: 48%; }
         .sig-line { border-top: 1px solid #333; margin-top: 40px; margin-bottom: 5px; }
-        .sig-img { max-height: 50px; max-width: 150px; display: block; margin-bottom: 2px; }
+        .sig-img { max-height: 55px; max-width: 160px; display: block; margin-bottom: 2px; object-fit: contain; }
         .update-note { font-size: 8pt; color: #666; margin-top: 15px; font-style: italic; }
 
         @media print {
@@ -36,6 +36,7 @@
             .a4-page, .a4-page * { visibility: visible; }
             .a4-page { position: absolute; left: 0; top: 0; box-shadow: none; margin: 0; width: 100%; padding: 10mm; }
             .no-print { display: none !important; }
+            img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -179,7 +180,7 @@
                 <!-- Paparan Dokumen A4 untuk Cetakan & Pengesahan Pelulus -->
                 <div id="paparanDokumen" style="display: none;" class="mt-4 pt-4 border-top">
                     
-                    <!-- Ruang Pengesahan Pelulus dengan Butang Sahkan -->
+                    <!-- Ruang Pengesahan Pelulus -->
                     <div class="card bg-light p-3 mb-4 no-print border-primary">
                         <h5 class="fw-bold text-primary mb-3">Ruang Pengesahan / Pelulus (Diisi Semasa Cetakan)</h5>
                         <div class="row">
@@ -289,7 +290,7 @@
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1H3J_6o_kHHZqwlSy7pAlYxX_KdCAILxsYErnnNIU-JA/export?format=csv";
     let senaraiDataGlobal = [];
     let editingRowIndex = null;
-    let activeOpenIndex = null; // Menyimpan indeks rekod yang sedang dibuka untuk pengesahan
+    let activeOpenIndex = null;
 
     function formatLocalDate(dateStr) {
         if (!dateStr) return '__________________';
@@ -662,7 +663,7 @@
             writerSigArea.innerHTML = `<div style="height: 50px;"></div>`;
         }
 
-        // Muat data pengesah sedia ada jika ada
+        // Muat data pengesah sedia ada jika ada (Menggunakan Image onload untuk kestabilan cetakan)
         document.getElementById('approverName').value = r.approverName || '';
         document.getElementById('approverJawatan').value = r.approverJawatan || '';
         
@@ -672,12 +673,14 @@
             const ctx = canvas.getContext('2d');
             const img = new Image();
             img.onload = function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0, 0);
+                updateApproverPreview();
             };
             img.src = r.approverSig;
+        } else {
+            updateApproverPreview();
         }
-
-        updateApproverPreview();
 
         let updateNoteEl = document.getElementById('p-update-note');
         if (r.lastUpdated) {
