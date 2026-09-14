@@ -14,7 +14,8 @@
         /* A4 Styling */
         .a4-page { width: 210mm; min-height: 297mm; padding: 15mm 20mm; margin: 0 auto; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); box-sizing: border-box; font-size: 11pt; line-height: 1.4; color: #000; }
         .report-header { display: flex; align-items: center; border-bottom: 3px double #1e3c72; padding-bottom: 10px; margin-bottom: 15px; }
-        .school-logo { width: 65px; height: 65px; object-fit: contain; margin-right: 15px; }
+        .school-logo { width: 70px; height: 70px; object-fit: contain; margin-right: 15px; }
+        .school-info { font-size: 8pt; color: #555; line-height: 1.2; margin-bottom: 4px; }
         .minit-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
         .minit-table td { padding: 4px; vertical-align: top; }
         .section-header { font-weight: bold; background-color: #f0f4f8; color: #1e3c72; padding: 4px 8px; margin-top: 10px; margin-bottom: 5px; border-left: 3px solid #1e3c72; font-size: 10pt; text-transform: uppercase; }
@@ -195,12 +196,16 @@
                     <!-- Dokumen A4 Rasmi -->
                     <div class="d-flex justify-content-center">
                         <div class="a4-page">
+                            <!-- Header Rasmi dengan Logo dan Maklumat Sekolah -->
                             <div class="report-header">
-                                <img src="logo.png" alt="Logo" class="school-logo" onerror="this.style.display='none'">
+                                <img src="logo.png" alt="Logo Sekolah" class="school-logo" onerror="this.style.display='none'">
                                 <div style="flex-grow: 1; text-align: center;">
-                                    <div style="font-size: 8pt; font-weight: bold; color: #555;">KEMENTERIAN PENDIDIKAN MALAYSIA</div>
-                                    <div style="font-weight: bold; font-size: 13pt; color: #1e3c72; text-transform: uppercase;">SEKOLAH MENENGAH KEBANGSAAN KAMARUL ARIFFIN</div>
-                                    <div style="font-weight: bold; font-size: 11pt; color: #d9534f; text-transform: uppercase;">MINIT CURAI</div>
+                                    <div style="font-size: 7.5pt; font-weight: bold; color: #555;">KEMENTERIAN PENDIDIKAN MALAYSIA</div>
+                                    <div style="font-weight: bold; font-size: 12pt; color: #1e3c72; text-transform: uppercase;">SEKOLAH MENENGAH KEBANGSAAN KAMARUL ARIFFIN</div>
+                                    <div class="school-info">
+                                        Alamat Sekolah Rasmi, Poskod, Negeri | Tel: 09-xxxxxxx | Emel: smkka@moe.edu.my
+                                    </div>
+                                    <div style="font-weight: bold; font-size: 10.5pt; color: #d9534f; text-transform: uppercase; margin-top: 2px;">MINIT CURAI</div>
                                 </div>
                             </div>
 
@@ -262,7 +267,6 @@
     let senaraiDataGlobal = [];
     let editingRowIndex = null;
 
-    // Fungsi Pembantu Pemformatan Tarikh Seragam (DD/MM/YYYY)
     function formatLocalDate(dateStr) {
         if (!dateStr) return '__________________';
         let d = new Date(dateStr);
@@ -273,7 +277,6 @@
         return `${day}/${month}/${year}`;
     }
 
-    // Setup Signature Pad Canvas
     function initCanvas(canvasId) {
         const canvas = document.getElementById(canvasId);
         const ctx = canvas.getContext('2d');
@@ -596,7 +599,6 @@
         document.getElementById('p-jawatan').innerText = r.jawatan || '-';
         document.getElementById('p-tajuk').innerText = r.tajuk || '-';
         
-        // Tarikh penulis diselaraskan menggunakan format DD/MM/YYYY
         let formattedTarikh = formatLocalDate(r.tarikh);
         document.getElementById('p-tarikh').innerText = formattedTarikh;
         document.getElementById('p-sig-tarikh').innerText = formattedTarikh;
@@ -638,8 +640,6 @@
 
         document.getElementById('p-app-nama').innerText = name || '__________________';
         document.getElementById('p-app-jawatan').innerText = jawatan || '__________________';
-        
-        // Tarikh pengesah diselaraskan menggunakan format DD/MM/YYYY yang sama
         document.getElementById('p-app-tarikh').innerText = formatLocalDate(new Date());
 
         const blank = document.createElement('canvas');
