@@ -3,787 +3,802 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minit Curai SMK Kamarul Ariffin</title>
-    <!-- Favicon Logo -->
-    <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>HARUM - Hab Pengisian Maklumat SMK Kamarul Ariffin</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts untuk Gaya Tulisan Tangan (Caveat & Patrick Hand) -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f4f7f6; font-family: 'Barlow', sans-serif; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
-        .app-container { max-width: 1100px; margin: 20px auto; padding: 15px; flex: 1; }
-        .card-box { background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 25px; margin-bottom: 20px; border-top: 4px solid #1e3c72; }
+        body { 
+            font-family: 'Patrick Hand', cursive; 
+            background-color: #fcfbf7;
+            color: #2b2d42;
+            font-size: 1.15rem;
+        }
+        .sketch-font { 
+            font-family: 'Caveat', cursive; 
+        }
         
-        /* A4 Styling */
-        .a4-page { width: 210mm; min-height: 297mm; padding: 15mm 20mm; margin: 0 auto; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); box-sizing: border-box; font-size: 11pt; line-height: 1.4; color: #000; position: relative; }
-        .report-header { display: flex; align-items: center; border-bottom: 3px double #1e3c72; padding-bottom: 10px; margin-bottom: 15px; }
-        .school-logo { width: 70px; height: 70px; object-fit: contain; margin-right: 15px; }
-        .school-info { font-size: 8pt; color: #555; line-height: 1.3; margin-bottom: 3px; }
-        .minit-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        .minit-table td { padding: 4px; vertical-align: top; }
-        .section-header { font-weight: bold; background-color: #f0f4f8; color: #1e3c72; padding: 4px 8px; margin-top: 10px; margin-bottom: 5px; border-left: 3px solid #1e3c72; font-size: 10pt; text-transform: uppercase; }
-        .content-box { min-height: 50px; white-space: pre-wrap; word-break: break-word; padding: 5px; background: #fafbfc; border: 1px solid #eee; margin-bottom: 10px; }
-        
-        /* Signature Canvas & Container */
-        .sig-canvas { border: 1px dashed #999; background: #fff; width: 100%; height: 120px; touch-action: none; border-radius: 4px; }
-        .signature-container { display: flex; justify-content: space-between; margin-top: 30px; page-break-inside: avoid; gap: 20px; }
-        .signature-box { width: 48%; }
-        .sig-line { border-top: 1px solid #333; margin-top: 40px; margin-bottom: 5px; }
-        .sig-img { max-height: 55px; max-width: 160px; display: block; margin-bottom: 2px; object-fit: contain; }
-        .update-note { font-size: 8pt; color: #666; margin-top: 15px; font-style: italic; }
+        /* Kesan Kotak Lukisan Tangan (Organic Sketch Border) */
+        .sketch-box {
+            border: 2px solid #2b2d42;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            box-shadow: 3px 3px 0px rgba(43, 45, 66, 0.9);
+            transition: transform 0.2s ease;
+        }
+        .sketch-box:hover {
+            transform: translateY(-2px) rotate(-0.3deg);
+        }
 
-        @media print {
-            body * { visibility: hidden; }
-            .a4-page, .a4-page * { visibility: visible; }
-            .a4-page { position: absolute; left: 0; top: 0; box-shadow: none; margin: 0; width: 100%; padding: 10mm; }
-            .no-print { display: none !important; }
-            img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .sketch-input, .sketch-textarea {
+            border: 2px dashed #2b2d42;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            background: #fffef9;
+        }
+
+        .paper-tape {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-1deg);
+            width: 80px;
+            height: 22px;
+            background-color: rgba(234, 221, 184, 0.7);
+            border-left: 2px dashed #d4c399;
+            border-right: 2px dashed #d4c399;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col selection:bg-amber-200 selection:text-slate-900">
+    
+    <!-- Header / Hab Pengisian Maklumat -->
+    <header class="bg-[#2b2d42] text-[#fcfbf7] border-b-4 border-[#d90429] shadow-xl relative overflow-hidden py-8 px-4">
+        <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#ffffff_1px,transparent_1px)] bg-[size:16px_16px]"></div>
 
-<div class="container app-container">
-    <!-- Header Web Dashboard dengan Logo -->
-    <div class="card-box text-center py-3 mb-4 no-print shadow-sm">
-        <div class="d-flex align-items-center justify-content-center">
-            <img src="logo.png" alt="Logo SMKKA" style="width: 55px; height: 55px; object-fit: contain;" class="me-3" onerror="this.style.display='none'">
-            <div class="text-start">
-                <h5 class="fw-bold text-primary mb-0">SMK KAMARUL ARIFFIN, LABIS, JOHOR</h5>
-                <small class="text-muted">Sistem Pengurusan Minit Curai Rasmi</small>
-            </div>
-        </div>
-    </div>
-
-    <!-- Menu Tab -->
-    <ul class="nav nav-pills justify-content-center mb-4 no-print" id="pills-tab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active fw-bold px-4" id="btn-tab-pengisian" data-bs-toggle="pill" data-bs-target="#tab-pengisian" type="button">1. Pengisian</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold px-4" id="btn-tab-cetakan" data-bs-toggle="pill" data-bs-target="#tab-cetakan" type="button" onclick="muatSenaraiRekod()">2. Cetakan & Senarai Rekod</button>
-        </li>
-    </ul>
-
-    <div class="tab-content" id="pills-tabContent">
-        <!-- TAB 1: PENGISIAN -->
-        <div class="tab-pane fade show active" id="tab-pengisian" role="tabpanel">
-            <div class="card-box no-print">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="fw-bold m-0" id="formTitle">Borang Minit Curai</h4>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id="cancelEditBtn" style="display: none;" onclick="resetFormMode()">Batal Kemaskini</button>
-                </div>
-                <form id="minitForm">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Nama Pegawai</label>
-                        <input type="text" class="form-control" id="namaPegawai" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Jawatan</label>
-                        <input type="text" class="form-control" id="jawatan" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Tajuk / Perkara</label>
-                        <input type="text" class="form-control" id="tajuk" required>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Tarikh</label>
-                            <input type="date" class="form-control" id="tarikh" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Masa</label>
-                            <input type="text" class="form-control" id="masa" placeholder="Cth: 8.00 pagi - 5.00 petang" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Tempat</label>
-                        <input type="text" class="form-control" id="tempat" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Anjuran</label>
-                        <input type="text" class="form-control" id="anjuran" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Pengerusi</label>
-                        <input type="text" class="form-control" id="pengerusi" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Kehadiran</label>
-                        <input type="text" class="form-control" id="kehadiran" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">10. Butiran Mesyuarat / Taklimat / Perbincangan / Kursus</label>
-                        <textarea class="form-control" id="butiran" rows="4" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">11. Implikasi Kepada SMK Kamarul Ariffin</label>
-                        <textarea class="form-control" id="implikasi" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">12. Tindakan Susulan SMK Kamarul Ariffin</label>
-                        <textarea class="form-control" id="tindakan" rows="3" required></textarea>
-                    </div>
-
-                    <!-- Tandatangan Digital Penulis -->
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Tandatangan Digital Penulis (Scribble / Lukis di sini):</label>
-                        <canvas id="writerCanvas" class="sig-canvas"></canvas>
-                        <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="clearSig('writerCanvas')">Padam Tandatangan</button>
-                    </div>
-
-                    <!-- Minit Curai Kawalan / Rahsia -->
-                    <div class="p-3 bg-light border rounded mb-4">
-                        <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" id="isKawalan" onchange="toggleKekunci()">
-                            <label class="form-check-label fw-bold text-danger" for="isKawalan">Simpan sebagai Minit Curai Kawalan (Rahsia)</label>
-                        </div>
-                        <div id="ruangKekunci" style="display: none;">
-                            <label class="form-label fw-semibold small">Cipta Kata Laluan (Password):</label>
-                            <input type="password" class="form-control form-control-sm" id="kawalanPassword" placeholder="Masukkan kata laluan">
-                        </div>
-                    </div>
-
-                    <!-- BUTANG SIMPAN / KEMASKINI DIBAHAGIAN AKHIR -->
-                    <div class="d-grid">
-                        <button type="button" class="btn btn-success btn-lg fw-bold" id="submitBtn" onclick="hantarData()">Simpan Rekod ke Google Sheets</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- TAB 2: CETAKAN & SENARAI REKOD -->
-        <div class="tab-pane fade" id="tab-cetakan" role="tabpanel">
-            <div class="card-box">
-                <div class="d-flex justify-content-between align-items-center mb-3 no-print">
-                    <h4 class="fw-bold m-0">Senarai Rekod Minit Curai</h4>
-                    <button class="btn btn-outline-primary btn-sm" onclick="muatSenaraiRekod()">Muat Semula</button>
-                </div>
-
-                <div id="statusMuat" class="text-center py-4">Sedang memuatkan senarai...</div>
-
-                <div class="table-responsive no-print" id="tabelRekodWrapper" style="display: none;">
-                    <table class="table table-striped align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Tarikh Mohon</th>
-                                <th>Nama Pegawai</th>
-                                <th>Tajuk / Perkara</th>
-                                <th>Status</th>
-                                <th>Kemaskini Terakhir</th>
-                                <th class="text-end">Tindakan</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelRekodBody"></tbody>
-                    </table>
-                </div>
-
-                <!-- Paparan Dokumen A4 untuk Cetakan & Pengesahan Pelulus -->
-                <div id="paparanDokumen" style="display: none;" class="mt-4 pt-4 border-top">
-                    
-                    <!-- Ruang Pengesahan Pelulus -->
-                    <div class="card bg-light p-3 mb-4 no-print border-primary">
-                        <h5 class="fw-bold text-primary mb-3">Ruang Pengesahan / Pelulus (Diisi Semasa Cetakan)</h5>
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label small fw-semibold">Nama Pengesah / Pelulus</label>
-                                <input type="text" class="form-control form-control-sm" id="approverName" placeholder="Cth: Pengetua / PK Pentadbiran" oninput="updateApproverPreview()">
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label small fw-semibold">Jawatan Pengesah</label>
-                                <input type="text" class="form-control form-control-sm" id="approverJawatan" placeholder="Cth: Pengetua SMKKA" oninput="updateApproverPreview()">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-semibold">Tandatangan Pengesah (Scribble):</label>
-                            <canvas id="approverCanvas" class="sig-canvas" style="height: 90px;"></canvas>
-                            <button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="clearSig('approverCanvas'); updateApproverPreview();">Padam Tandatangan Pelulus</button>
-                        </div>
-                        <div class="d-grid">
-                            <button type="button" class="btn btn-primary fw-bold" onclick="hantarPengesahan()">Sahkan & Kemaskini Status Rekod</button>
-                        </div>
-                    </div>
-
-                    <div class="text-end mb-3 no-print">
-                        <button class="btn btn-success fw-semibold" onclick="window.print()">Cetak / Simpan PDF (A4)</button>
-                        <button class="btn btn-secondary fw-semibold" onclick="tutupDokumen()">Tutup</button>
-                    </div>
-
-                    <!-- Dokumen A4 Rasmi -->
-                    <div class="d-flex justify-content-center">
-                        <div class="a4-page">
-                            <!-- Header Rasmi dengan Logo dan Maklumat Sekolah -->
-                            <div class="report-header">
-                                <img src="logo.png" alt="Logo Sekolah" class="school-logo" onerror="this.style.display='none'">
-                                <div style="flex-grow: 1; text-align: center;">
-                                    <div style="font-size: 7.5pt; font-weight: bold; color: #555;">KEMENTERIAN PENDIDIKAN MALAYSIA</div>
-                                    <div style="font-weight: bold; font-size: 12pt; color: #1e3c72; text-transform: uppercase;">SEKOLAH MENENGAH KEBANGSAAN KAMARUL ARIFFIN</div>
-                                    <div class="school-info">
-                                        Jalan Tenang, 85300 Labis, Johor<br>
-                                        Tel: 07-9255793 | Emel: jea7039@moe.edu.my
-                                    </div>
-                                    <div style="font-weight: bold; font-size: 10.5pt; color: #d9534f; text-transform: uppercase; margin-top: 2px;">MINIT CURAI</div>
-                                </div>
-                            </div>
-
-                            <table class="minit-table">
-                                <tr><td style="width: 25px; font-weight: bold;">1.</td><td style="width: 200px; font-weight: bold;">NAMA PEGAWAI</td><td style="width: 10px;">:</td><td id="p-nama">-</td></tr>
-                                <tr><td style="font-weight: bold;">2.</td><td style="font-weight: bold;">JAWATAN</td><td>:</td><td id="p-jawatan">-</td></tr>
-                                <tr><td style="font-weight: bold;">3.</td><td style="font-weight: bold;">TAJUK / PERKARA</td><td>:</td><td id="p-tajuk">-</td></tr>
-                                <tr><td style="font-weight: bold;">4.</td><td style="font-weight: bold;">TARIKH</td><td>:</td><td id="p-tarikh">-</td></tr>
-                                <tr><td style="font-weight: bold;">5.</td><td style="font-weight: bold;">MASA</td><td>:</td><td id="p-masa">-</td></tr>
-                                <tr><td style="font-weight: bold;">6.</td><td style="font-weight: bold;">TEMPAT</td><td>:</td><td id="p-tempat">-</td></tr>
-                                <tr><td style="font-weight: bold;">7.</td><td style="font-weight: bold;">ANJURAN</td><td>:</td><td id="p-anjuran">-</td></tr>
-                                <tr><td style="font-weight: bold;">8.</td><td style="font-weight: bold;">PENGERUSI</td><td>:</td><td id="p-pengerusi">-</td></tr>
-                                <tr><td style="font-weight: bold;">9.</td><td style="font-weight: bold;">KEHADIRAN</td><td>:</td><td id="p-kehadiran">-</td></tr>
-                            </table>
-
-                            <div class="section-header">10. Butiran Mesyuarat / Taklimat / Perbincangan / Kursus</div>
-                            <div class="content-box" id="p-butiran"></div>
-
-                            <div class="section-header">11. Implikasi Kepada SMK Kamarul Ariffin</div>
-                            <div class="content-box" id="p-implikasi"></div>
-
-                            <div class="section-header">12. Tindakan Susulan SMK Kamarul Ariffin</div>
-                            <div class="content-box" id="p-tindakan"></div>
-
-                            <!-- Bahagian Tandatangan Berpasangan -->
-                            <div class="signature-container">
-                                <!-- Kiri: Penulis -->
-                                <div class="signature-box">
-                                    <div id="p-writer-sig-area"></div>
-                                    <div class="sig-line"></div>
-                                    <div style="font-weight: bold; font-size: 10pt;">Tandatangan Pegawai</div>
-                                    <div style="font-size: 9pt;">Nama: <span id="p-sig-nama">(-)</span></div>
-                                    <div style="font-size: 9pt;">Jawatan: <span id="p-sig-jawatan">(-)</span></div>
-                                    <div style="font-size: 9pt;">Tarikh: <span id="p-sig-tarikh">__________________</span></div>
-                                </div>
-                                <!-- Kanan: Pengesah / Pelulus -->
-                                <div class="signature-box">
-                                    <div id="p-approver-sig-area"></div>
-                                    <div class="sig-line"></div>
-                                    <div style="font-weight: bold; font-size: 10pt;">Disahkan oleh,</div>
-                                    <div style="font-size: 9pt;">Nama: <span id="p-app-nama">__________________</span></div>
-                                    <div style="font-size: 9pt;">Jawatan: <span id="p-app-jawatan">__________________</span></div>
-                                    <div style="font-size: 9pt;">Tarikh: <span id="p-app-tarikh">__________________</span></div>
-                                </div>
-                            </div>
-
-                            <!-- Nota Catatan Masa Kemaskini -->
-                            <div id="p-update-note" class="update-note"></div>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Footer Rasmi -->
-<footer class="text-center py-4 text-muted no-print" style="font-size: 9pt; background-color: #e9ecef; border-top: 1px solid #dee2e6;">
-    Hak Cipta Terpelihara SMK Kamarul Ariffin 2026
-</footer>
-
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4J5L3v4oYDfTRVkfI839jBqrF24pgkjoggsW7oBS14FFDlgo3fOVqwWNA9TDCC74d/exec";
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1H3J_6o_kHHZqwlSy7pAlYxX_KdCAILxsYErnnNIU-JA/export?format=csv";
-    let senaraiDataGlobal = [];
-    let editingRowIndex = null;
-    let activeOpenIndex = null;
-
-    function formatLocalDate(dateStr) {
-        if (!dateStr) return '__________________';
-        let d = new Date(dateStr);
-        if (isNaN(d.getTime())) return dateStr;
-        let day = String(d.getDate()).padStart(2, '0');
-        let month = String(d.getMonth() + 1).padStart(2, '0');
-        let year = d.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
-
-    function initCanvas(canvasId) {
-        const canvas = document.getElementById(canvasId);
-        const ctx = canvas.getContext('2d');
-        let painting = false;
-
-        function getPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-            return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
-            };
-        }
-
-        function start(e) {
-            painting = true;
-            draw(e);
-        }
-        function end() {
-            painting = false;
-            ctx.beginPath();
-        }
-        function draw(e) {
-            if (!painting) return;
-            e.preventDefault();
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = '#000';
-
-            const pos = getPos(e);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
-        }
-
-        canvas.addEventListener('mousedown', start);
-        canvas.addEventListener('mouseup', end);
-        canvas.addEventListener('mousemove', draw);
-
-        canvas.addEventListener('touchstart', start, { passive: false });
-        canvas.addEventListener('touchend', end);
-        canvas.addEventListener('touchmove', draw, { passive: false });
-    }
-
-    function clearSig(canvasId) {
-        const canvas = document.getElementById(canvasId);
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        initCanvas('writerCanvas');
-        initCanvas('approverCanvas');
-    });
-
-    function toggleKekunci() {
-        const checked = document.getElementById('isKawalan').checked;
-        document.getElementById('ruangKekunci').style.display = checked ? 'block' : 'none';
-    }
-
-    function resetFormMode() {
-        editingRowIndex = null;
-        document.getElementById('minitForm').reset();
-        clearSig('writerCanvas');
-        document.getElementById('ruangKekunci').style.display = 'none';
-        document.getElementById('formTitle').innerText = "Borang Minit Curai";
-        document.getElementById('submitBtn').innerText = "Simpan Rekod ke Google Sheets";
-        document.getElementById('cancelEditBtn').style.display = 'none';
-    }
-
-    function hantarData() {
-        const isKawalan = document.getElementById('isKawalan').checked;
-        const password = document.getElementById('kawalanPassword').value;
-        const writerCanvas = document.getElementById('writerCanvas');
-        
-        const blank = document.createElement('canvas');
-        blank.width = writerCanvas.width;
-        blank.height = writerCanvas.height;
-        const signatureBase64 = writerCanvas.toDataURL() !== blank.toDataURL() ? writerCanvas.toDataURL('image/png') : "";
-
-        if (isKawalan && !password) {
-            alert("Sila masukkan kata laluan untuk Minit Curai Kawalan.");
-            return;
-        }
-
-        const data = {
-            rowIndex: editingRowIndex,
-            namaPegawai: document.getElementById('namaPegawai').value,
-            jawatan: document.getElementById('jawatan').value,
-            tajuk: document.getElementById('tajuk').value,
-            tarikh: document.getElementById('tarikh').value,
-            masa: document.getElementById('masa').value,
-            tempat: document.getElementById('tempat').value,
-            anjuran: document.getElementById('anjuran').value,
-            pengerusi: document.getElementById('pengerusi').value,
-            kehadiran: document.getElementById('kehadiran').value,
-            butiran: document.getElementById('butiran').value,
-            implikasi: document.getElementById('implikasi').value,
-            tindakan: document.getElementById('tindakan').value,
-            signature: signatureBase64,
-            statusKawalan: isKawalan ? "Kawalan" : "Biasa",
-            password: isKawalan ? password : "",
-            statusPengesahan: "Belum Disahkan"
-        };
-
-        if(!data.namaPegawai || !data.tajuk || !data.tarikh) {
-            alert("Sila lengkapkan maklumat borang dengan betul.");
-            return;
-        }
-
-        const btn = event.target;
-        btn.disabled = true;
-        btn.innerText = "Sedang Memproses...";
-
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(() => {
-            alert(editingRowIndex ? "Berjaya! Rekod telah dikemaskini." : "Berjaya! Rekod baharu telah disimpan.");
-            resetFormMode();
-            btn.disabled = false;
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Ralat sambungan. Sila cuba lagi.");
-            btn.disabled = false;
-            btn.innerText = editingRowIndex ? "Kemaskini Rekod" : "Simpan Rekod ke Google Sheets";
-        });
-    }
-
-    function muatSenaraiRekod() {
-        document.getElementById('statusMuat').style.display = 'block';
-        document.getElementById('tabelRekodWrapper').style.display = 'none';
-        document.getElementById('paparanDokumen').style.display = 'none';
-
-        fetch(SHEET_CSV_URL)
-        .then(res => res.text())
-        .then(csvText => {
-            let rows = parseCSVAdvanced(csvText);
-            senaraiDataGlobal = [];
-            let tbody = document.getElementById('tabelRekodBody');
-            tbody.innerHTML = '';
-
-            for (let i = 1; i < rows.length; i++) {
-                let r = rows[i];
-                if (r && r.length >= 2 && r[1]) {
-                    let record = {
-                        rowIndex: i + 1,
-                        timestamp: r[0],
-                        namaPegawai: r[1],
-                        jawatan: r[2],
-                        tajuk: r[3],
-                        tarikh: r[4],
-                        masa: r[5],
-                        tempat: r[6],
-                        anjuran: r[7],
-                        pengerusi: r[8],
-                        kehadiran: r[9],
-                        butiran: r[10],
-                        implikasi: r[11],
-                        tindakan: r[12],
-                        signature: r[13] || "",
-                        statusKawalan: (r[14] || "Biasa").trim(),
-                        password: (r[15] || "").trim(),
-                        lastUpdated: r[16] || "",
-                        statusPengesahan: (r[17] || "Belum Disahkan").trim(),
-                        approverName: r[18] || "",
-                        approverJawatan: r[19] || "",
-                        approverSig: r[20] || ""
-                    };
-                    senaraiDataGlobal.push(record);
-                }
-            }
-
-            if (senaraiDataGlobal.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Tiada rekod ditemui.</td></tr>';
-            } else {
-                senaraiDataGlobal.forEach((row, idx) => {
-                    let badge = row.statusKawalan === 'Kawalan' 
-                        ? '<span class="badge bg-danger mb-1">Kawalan (Rahsia)</span><br>' 
-                        : '';
-
-                    if (row.statusPengesahan === 'Telah disahkan / disemak') {
-                        badge += '<span class="badge bg-primary">Telah disahkan / disemak</span>';
-                    } else {
-                        badge += '<span class="badge bg-secondary">Belum disahkan</span>';
-                    }
-
-                    let formattedDate = formatLocalDate(row.tarikh);
-                    let lastUpdatedText = row.lastUpdated ? row.lastUpdated : '-';
-
-                    let tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${formattedDate}</td>
-                        <td class="fw-semibold">${row.namaPegawai}</td>
-                        <td>${row.tajuk}</td>
-                        <td>${badge}</td>
-                        <td><small class="text-muted">${lastUpdatedText}</small></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-warning fw-semibold me-1" onclick="sediaUntukKemaskini(${idx})">Kemaskini</button>
-                            <button class="btn btn-sm btn-primary fw-semibold" onclick="bukaRekod(${idx})">Buka & Cetak</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-
-            document.getElementById('statusMuat').style.display = 'none';
-            document.getElementById('tabelRekodWrapper').style.display = 'block';
-        })
-        .catch(err => {
-            console.error(err);
-            document.getElementById('statusMuat').innerHTML = '<span class="text-danger">Gagal memuatkan rekod. Sila pastikan Google Sheet telah di-Publish to Web (CSV).</span>';
-        });
-    }
-
-    function parseCSVAdvanced(text) {
-        let rows = [];
-        let currentRow = [];
-        let currentField = "";
-        let insideQuotes = false;
-        
-        for (let i = 0; i < text.length; i++) {
-            let c = text[i];
-            let nextC = text[i+1];
+        <div class="max-w-7xl mx-auto relative z-10 flex flex-col gap-6">
             
-            if (insideQuotes) {
-                if (c === '"') {
-                    if (nextC === '"') {
-                        currentField += '"';
-                        i++;
-                    } else {
-                        insideQuotes = false;
-                    }
-                } else {
-                    currentField += c;
-                }
-            } else {
-                if (c === '"') {
-                    insideQuotes = true;
-                } else if (c === ',') {
-                    currentRow.push(currentField);
-                    currentField = "";
-                } else if (c === '\r' && nextC === '\n') {
-                    currentRow.push(currentField);
-                    rows.push(currentRow);
-                    currentRow = [];
-                    currentField = "";
-                    i++;
-                } else if (c === '\n' || c === '\r') {
-                    currentRow.push(currentField);
-                    rows.push(currentRow);
-                    currentRow = [];
-                    currentField = "";
-                } else {
-                    currentField += c;
-                }
-            }
-        }
-        if (currentField !== "" || currentRow.length > 0) {
-            currentRow.push(currentField);
-            rows.push(currentRow);
-        }
-        return rows;
-    }
+            <!-- Bahagian Atas: Logo, Info Sekolah & Butang Admin -->
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
+                
+                <!-- Identiti & Logo Sekolah -->
+                <div class="flex items-center space-x-4 text-center sm:text-left">
+                    <div class="relative bg-[#fcfbf7] p-2.5 rounded-2xl border-2 border-[#2b2d42] shadow-[3px_3px_0px_#d90429] flex items-center justify-center w-16 h-16 shrink-0 transform -rotate-2">
+                        <img src="/logo.png" alt="Logo SMK Kamarul Ariffin" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x200/fcfbf7/2b2d42?text=SMKKA';">
+                    </div>
+                    <div>
+                        <div class="text-[#edf2f4] text-xs font-mono uppercase tracking-widest flex items-center gap-1.5">
+                            <i class="fa-solid fa-feather text-[#ffb703]"></i> Hab Pengisian Maklumat SEMEKAR
+                        </div>
+                        <div class="text-xl font-bold sketch-font tracking-wide text-amber-200">SMK Kamarul Ariffin, Labis</div>
+                    </div>
+                </div>
 
-    function sediaUntukKemaskini(idx) {
-        let r = senaraiDataGlobal[idx];
+                <!-- Kawasan Admin & Carian -->
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                    <!-- Kotak Carian Sistem -->
+                    <div class="w-full sm:w-64">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="text" id="searchApp" placeholder="Cari sistem..." class="w-full pl-11 pr-4 py-2 bg-[#fcfbf7] text-[#2b2d42] placeholder-slate-400 focus:outline-none sketch-input font-sans text-sm shadow-inner">
+                        </div>
+                    </div>
 
-        if (r.statusKawalan === 'Kawalan') {
-            let pass = prompt("Dokumen ini adalah Minit Curai Kawalan (Rahsia). Sila masukkan kata laluan untuk mengemaskini:");
-            if (pass !== r.password) {
-                alert("Kata laluan salah! Akses ditolak.");
-                return;
-            }
-        }
+                    <!-- Butang Log Masuk / Status Admin -->
+                    <div id="adminAuthArea">
+                        <button onclick="openLoginModal()" class="px-4 py-2 bg-[#ffb703] text-[#2b2d42] font-bold sketch-box text-sm transition hover:bg-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-lock text-xs"></i> Log Masuk Admin
+                        </button>
+                    </div>
+                </div>
 
-        editingRowIndex = r.rowIndex;
-        document.getElementById('namaPegawai').value = r.namaPegawai || '';
-        document.getElementById('jawatan').value = r.jawatan || '';
-        document.getElementById('tajuk').value = r.tajuk || '';
-        document.getElementById('tarikh').value = r.tarikh || '';
-        document.getElementById('masa').value = r.masa || '';
-        document.getElementById('tempat').value = r.tempat || '';
-        document.getElementById('anjuran').value = r.anjuran || '';
-        document.getElementById('pengerusi').value = r.pengerusi || '';
-        document.getElementById('kehadiran').value = r.kehadiran || '';
-        document.getElementById('butiran').value = r.butiran || '';
-        document.getElementById('implikasi').value = r.implikasi || '';
-        document.getElementById('tindakan').value = r.tindakan || '';
+            </div>
+
+            <!-- Tajuk Utama "HARUM" -->
+            <div class="relative w-full py-5 px-6 bg-[#fcfbf7] text-[#2b2d42] sketch-box flex flex-col items-center justify-center text-center transform rotate-1">
+                <div class="paper-tape"></div>
+                
+                <h1 class="text-6xl sm:text-8xl font-black sketch-font tracking-wider text-[#d90429] drop-shadow-[2px_2px_0px_#2b2d42]">
+                    HARUM
+                </h1>
+
+                <div class="mt-1 relative z-10">
+                    <p class="text-base sm:text-xl font-bold tracking-widest text-[#2b2d42] uppercase sketch-font">
+                        Hab Automasi Rekod &amp; Urus Maklumat
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Kandungan Utama -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-10 w-full">
         
-        let isKawalan = (r.statusKawalan === 'Kawalan');
-        document.getElementById('isKawalan').checked = isKawalan;
-        toggleKekunci();
-        document.getElementById('kawalanPassword').value = r.password || '';
+        <!-- SEKSYEN PAPAN PENGUMUMAN RASMI -->
+        <section class="mb-12">
+            <div class="bg-[#fffef9] p-6 sm:p-8 sketch-box relative">
+                <div class="paper-tape"></div>
+                
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b-2 border-dashed border-slate-300 pb-4">
+                    <div>
+                        <div class="text-[#d90429] text-xs font-bold uppercase tracking-widest font-mono flex items-center gap-1.5">
+                            <i class="fa-solid fa-bullhorn"></i> Papan Kenyataan Rasmi
+                        </div>
+                        <h2 class="text-3xl font-bold sketch-font text-[#2b2d42]">Pengumuman &amp; Notis Penting</h2>
+                    </div>
 
-        clearSig('writerCanvas');
-        if (r.signature && r.signature.startsWith('data:image')) {
-            const canvas = document.getElementById('writerCanvas');
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            img.onload = function() {
-                ctx.drawImage(img, 0, 0);
-            };
-            img.src = r.signature;
-        }
+                    <!-- Butang Tambah Pengumuman (Hanya keluar jika Admin Login) -->
+                    <div id="addAnnouncementBtnContainer" class="hidden">
+                        <button onclick="openAnnouncementModal()" class="px-4 py-2 bg-[#2b2d42] hover:bg-[#d90429] text-white font-bold rounded-xl sketch-font text-lg transition shadow-[2px_2px_0px_#000] flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle text-xs"></i> Buat Pengumuman Baru
+                        </button>
+                    </div>
+                </div>
 
-        document.getElementById('formTitle').innerText = "Kemaskini Minit Curai (Baris: " + r.rowIndex + ")";
-        document.getElementById('submitBtn').innerText = "Kemaskini Rekod";
-        document.getElementById('cancelEditBtn').style.display = 'inline-block';
+                <!-- Senarai Pengumuman -->
+                <div id="announcementList" class="space-y-4">
+                    <p class="text-slate-500 text-center py-4 italic">Memuatkan pengumuman dari Google Sheet...</p>
+                </div>
+            </div>
+        </section>
 
-        var tabEl = document.getElementById('btn-tab-pengisian');
-        var tab = new bootstrap.Tab(tabEl);
-        tab.show();
-    }
+        <!-- Menu Penapis Kategori Sistem -->
+        <div class="flex items-center justify-between mb-8 flex-wrap gap-4 border-b-2 border-dashed border-slate-300 pb-4">
+            <div class="flex items-center space-x-2 text-slate-600 text-sm font-bold">
+                <i class="fa-solid fa-bookmark text-[#d90429]"></i>
+                <span>Kategori Sistem:</span>
+            </div>
+            
+            <div class="flex flex-wrap gap-3" id="filterButtons">
+                <button onclick="filterCategory('all')" data-cat="all" class="filter-btn px-4 py-1.5 bg-[#ffb703] text-[#2b2d42] font-bold sketch-box text-base transition active-btn transform -rotate-1 hover:rotate-1">Semua</button>
+                <button onclick="filterCategory('Pentadbiran')" data-cat="Pentadbiran" class="filter-btn px-4 py-1.5 bg-[#fcfbf7] text-[#2b2d42] font-bold sketch-box text-base transition hover:bg-amber-100 transform rotate-1">Pentadbiran</button>
+                <button onclick="filterCategory('Kurikulum')" data-cat="Kurikulum" class="filter-btn px-4 py-1.5 bg-[#fcfbf7] text-[#2b2d42] font-bold sketch-box text-base transition hover:bg-amber-100 transform -rotate-1">Kurikulum</button>
+                <button onclick="filterCategory('HEM')" data-cat="HEM" class="filter-btn px-4 py-1.5 bg-[#fcfbf7] text-[#2b2d42] font-bold sketch-box text-base transition hover:bg-amber-100 transform rotate-1">HEM</button>
+                <button onclick="filterCategory('KoKurikulum')" data-cat="KoKurikulum" class="filter-btn px-4 py-2 bg-[#fcfbf7] text-[#2b2d42] font-bold sketch-box text-base transition hover:bg-amber-100 transform -rotate-1">KoKurikulum</button>
+            </div>
+        </div>
 
-    function bukaRekod(idx) {
-        let r = senaraiDataGlobal[idx];
-        activeOpenIndex = idx;
+        <!-- Senarai Kad Sistem -->
+        <div id="appGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            
+            <!-- 1. Pentadbiran - Laporan Kerosakan -->
+            <div class="app-card bg-[#fffef9] p-6 flex flex-col justify-between sketch-box relative group" data-category="Pentadbiran" data-name="laporan kerosakan rosak.semekar.com pentadbiran" style="transform: rotate(-0.5deg);">
+                <div class="paper-tape"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider rounded-md font-mono border border-blue-300">PENTADBIRAN</span>
+                        <div class="w-10 h-10 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold sketch-font text-[#2b2d42] mb-2">Laporan Kerosakan</h3>
+                    <p class="text-slate-600 text-base mb-6 leading-snug">Sistem pelaporan dan pengurusan kerosakan fasiliti sekolah dengan rekod masa nyata.</p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between text-xs text-slate-500 mb-3 font-mono bg-slate-100 px-3 py-1.5 rounded border border-dashed border-slate-300">
+                        <span>Status: <span class="text-emerald-600 font-bold">AKTIF</span></span>
+                        <span class="truncate ml-2 text-slate-500">rosak.semekar.com</span>
+                    </div>
+                    <a href="https://rosak.semekar.com" target="_blank" class="w-full inline-flex items-center justify-center bg-[#2b2d42] hover:bg-[#d90429] text-white font-bold py-2.5 px-4 rounded-xl transition text-base sketch-font tracking-wider shadow-[2px_2px_0px_#000]">
+                        <span>Buka Sistem</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
 
-        if (r.statusKawalan === 'Kawalan') {
-            let pass = prompt("Dokumen ini adalah Minit Curai Kawalan (Rahsia). Sila masukkan kata laluan untuk membuka:");
-            if (pass !== r.password) {
-                alert("Kata laluan salah! Akses ditolak.");
-                return;
-            }
-        }
+            <!-- 2. Pentadbiran - Sistem Minit Curai (BARU) -->
+            <div class="app-card bg-[#fffef9] p-6 flex flex-col justify-between sketch-box relative group" data-category="Pentadbiran" data-name="sistem minit curai curai.semekar.com pentadbiran" style="transform: rotate(0.6deg);">
+                <div class="paper-tape"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider rounded-md font-mono border border-blue-300">PENTADBIRAN</span>
+                        <div class="w-10 h-10 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-file-lines"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold sketch-font text-[#2b2d42] mb-2">Sistem Minit Curai</h3>
+                    <p class="text-slate-600 text-base mb-6 leading-snug">Pengurusan dan pelaporan minit curai mesyuarat, kursus, atau taklimat rasmi dengan pantas.</p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between text-xs text-slate-500 mb-3 font-mono bg-slate-100 px-3 py-1.5 rounded border border-dashed border-slate-300">
+                        <span>Status: <span class="text-emerald-600 font-bold">AKTIF</span></span>
+                        <span class="truncate ml-2 text-slate-500">curai.semekar.com</span>
+                    </div>
+                    <a href="https://curai.semekar.com" target="_blank" class="w-full inline-flex items-center justify-center bg-[#2b2d42] hover:bg-[#d90429] text-white font-bold py-2.5 px-4 rounded-xl transition text-base sketch-font tracking-wider shadow-[2px_2px_0px_#000]">
+                        <span>Buka Sistem</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
 
-        document.getElementById('p-nama').innerText = r.namaPegawai || '-';
-        document.getElementById('p-jawatan').innerText = r.jawatan || '-';
-        document.getElementById('p-tajuk').innerText = r.tajuk || '-';
-        
-        let formattedTarikh = formatLocalDate(r.tarikh);
-        document.getElementById('p-tarikh').innerText = formattedTarikh;
-        document.getElementById('p-sig-tarikh').innerText = formattedTarikh;
+            <!-- 3. Kurikulum -->
+            <div class="app-card bg-[#fffef9] p-6 flex flex-col justify-between sketch-box relative group" data-category="Kurikulum" data-name="pengurusan headcount headcount.semekar.com kurikulum" style="transform: rotate(0.8deg);">
+                <div class="paper-tape"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider rounded-md font-mono border border-emerald-300">KURIKULUM</span>
+                        <div class="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold sketch-font text-[#2b2d42] mb-2">Pengurusan Headcount</h3>
+                    <p class="text-slate-600 text-base mb-6 leading-snug">Analisis prestasi akademik murid, unjuran sasaran peperiksaan, dan metrik kemajuan.</p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between text-xs text-slate-500 mb-3 font-mono bg-slate-100 px-3 py-1.5 rounded border border-dashed border-slate-300">
+                        <span>Status: <span class="text-emerald-600 font-bold">AKTIF</span></span>
+                        <span class="truncate ml-2 text-slate-500">headcount.semekar.com</span>
+                    </div>
+                    <a href="https://headcount.semekar.com" target="_blank" class="w-full inline-flex items-center justify-center bg-[#2b2d42] hover:bg-[#d90429] text-white font-bold py-2.5 px-4 rounded-xl transition text-base sketch-font tracking-wider shadow-[2px_2px_0px_#000]">
+                        <span>Buka Sistem</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
 
-        document.getElementById('p-masa').innerText = r.masa || '-';
-        document.getElementById('p-tempat').innerText = r.tempat || '-';
-        document.getElementById('p-anjuran').innerText = r.anjuran || '-';
-        document.getElementById('p-pengerusi').innerText = r.pengerusi || '-';
-        document.getElementById('p-kehadiran').innerText = r.kehadiran || '-';
-        
-        document.getElementById('p-butiran').innerText = r.butiran || '-';
-        document.getElementById('p-implikasi').innerText = r.implikasi || '-';
-        document.getElementById('p-tindakan').innerText = r.tindakan || '-';
+            <!-- 4. Hal Ehwal Murid -->
+            <div class="app-card bg-[#fffef9] p-6 flex flex-col justify-between sketch-box relative group" data-category="HEM" data-name="pelaporan kehadiran murid hadir.semekar.com hem hal ehwal murid" style="transform: rotate(-0.7deg);">
+                <div class="paper-tape"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider rounded-md font-mono border border-amber-300">HAL EHWAL MURID</span>
+                        <div class="w-10 h-10 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold sketch-font text-[#2b2d42] mb-2">Pelaporan Kehadiran Murid</h3>
+                    <p class="text-slate-600 text-base mb-6 leading-snug">Papan pemuka rekod kehadiran harian, statistik kehadiran, dan analitik disiplin.</p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between text-xs text-slate-500 mb-3 font-mono bg-slate-100 px-3 py-1.5 rounded border border-dashed border-slate-300">
+                        <span>Status: <span class="text-emerald-600 font-bold">AKTIF</span></span>
+                        <span class="truncate ml-2 text-slate-500">hadir.semekar.com</span>
+                    </div>
+                    <a href="https://hadir.semekar.com" target="_blank" class="w-full inline-flex items-center justify-center bg-[#2b2d42] hover:bg-[#d90429] text-white font-bold py-2.5 px-4 rounded-xl transition text-base sketch-font tracking-wider shadow-[2px_2px_0px_#000]">
+                        <span>Buka Sistem</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
 
-        document.getElementById('p-sig-nama').innerText = r.namaPegawai || '-';
-        document.getElementById('p-sig-jawatan').innerText = r.jawatan || '-';
+            <!-- 5. KoKurikulum -->
+            <div class="app-card bg-[#fffef9] p-6 flex flex-col justify-between sketch-box relative group" data-category="KoKurikulum" data-name="pelaporan aktiviti kokurikulum koku.semekar.com" style="transform: rotate(0.5deg);">
+                <div class="paper-tape"></div>
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-bold uppercase tracking-wider rounded-md font-mono border border-purple-300">KOKURIKULUM</span>
+                        <div class="w-10 h-10 rounded-full bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600">
+                            <i class="fa-solid fa-medal"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold sketch-font text-[#2b2d42] mb-2">Pelaporan Aktiviti KoKurikulum</h3>
+                    <p class="text-slate-600 text-base mb-6 leading-snug">Dokumentasi log aktiviti unit beruniform, kelab, persatuan, serta markah PAJSK.</p>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between text-xs text-slate-500 mb-3 font-mono bg-slate-100 px-3 py-1.5 rounded border border-dashed border-slate-300">
+                        <span>Status: <span class="text-emerald-600 font-bold">AKTIF</span></span>
+                        <span class="truncate ml-2 text-slate-500">koku.semekar.com</span>
+                    </div>
+                    <a href="https://koku.semekar.com" target="_blank" class="w-full inline-flex items-center justify-center bg-[#2b2d42] hover:bg-[#d90429] text-white font-bold py-2.5 px-4 rounded-xl transition text-base sketch-font tracking-wider shadow-[2px_2px_0px_#000]">
+                        <span>Buka Sistem</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </div>
 
-        let writerSigArea = document.getElementById('p-writer-sig-area');
-        if (r.signature && r.signature.startsWith('data:image')) {
-            writerSigArea.innerHTML = `<img src="${r.signature}" class="sig-img" alt="Tandatangan Penulis">`;
-        } else {
-            writerSigArea.innerHTML = `<div style="height: 50px;"></div>`;
-        }
+        </div>
 
-        // Muat data pengesah sedia ada jika ada (Menggunakan Image onload untuk kestabilan cetakan)
-        document.getElementById('approverName').value = r.approverName || '';
-        document.getElementById('approverJawatan').value = r.approverJawatan || '';
-        
-        clearSig('approverCanvas');
-        if (r.approverSig && r.approverSig.startsWith('data:image')) {
-            const canvas = document.getElementById('approverCanvas');
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            img.onload = function() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-                updateApproverPreview();
-            };
-            img.src = r.approverSig;
-        } else {
-            updateApproverPreview();
-        }
+        <!-- Mesej tiada sistem -->
+        <div id="noResults" class="hidden text-center py-16 mb-12">
+            <div class="inline-block p-4 rounded-full bg-amber-100 border-2 border-[#2b2d42] mb-4 text-[#2b2d42]">
+                <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+            </div>
+            <p class="text-[#2b2d42] text-xl font-bold sketch-font">TIADA SISTEM DIJUMPAI</p>
+            <p class="text-slate-600 text-sm mt-1">Sila semak semula ejaan kata kunci carian anda.</p>
+        </div>
 
-        let updateNoteEl = document.getElementById('p-update-note');
-        if (r.lastUpdated) {
-            updateNoteEl.innerText = "* Catatan: Rekod terakhir dikemaskini pada " + r.lastUpdated;
-        } else {
-            updateNoteEl.innerText = "";
-        }
+        <!-- SEKSYEN LAKARAN SEKOLAH & CUACA TERKINI -->
+        <section class="mt-8 pt-6 border-t-2 border-dashed border-slate-300">
+            <div class="bg-[#fffef9] p-5 md:p-6 sketch-box relative overflow-hidden">
+                <div class="paper-tape"></div>
 
-        document.getElementById('paparanDokumen').style.display = 'block';
-        document.getElementById('paparanDokumen').scrollIntoView({ behavior: 'smooth' });
-    }
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-4 relative z-10">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-[#d90429] text-xs font-bold uppercase tracking-widest mb-1 font-mono">
+                            <i class="fa-solid fa-pencil"></i> Sketsa Suasana Kampus
+                        </div>
+                        <h2 class="text-2xl font-bold sketch-font text-[#2b2d42]">SMK KAMARUL ARIFFIN, LABIS</h2>
+                    </div>
 
-    function updateApproverPreview() {
-        const name = document.getElementById('approverName').value;
-        const jawatan = document.getElementById('approverJawatan').value;
-        const canvas = document.getElementById('approverCanvas');
-        const sigArea = document.getElementById('p-approver-sig-area');
+                    <div class="flex items-center gap-4 bg-[#fcfbf7] px-4 py-2 rounded-xl border-2 border-[#2b2d42] text-xs font-mono shadow-[2px_2px_0px_#2b2d42]">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-sun text-amber-500 text-base"></i>
+                            <div>
+                                <div class="text-[9px] text-slate-500 uppercase">Cuaca Labis</div>
+                                <div class="text-[#2b2d42] font-bold">29°C • Cerah Berawan</div>
+                            </div>
+                        </div>
+                        <div class="h-5 w-[1px] bg-slate-300"></div>
+                        <div>
+                            <div class="text-[9px] text-slate-500 uppercase">Kelembapan</div>
+                            <div class="text-[#2b2d42] font-bold">82%</div>
+                        </div>
+                    </div>
+                </div>
 
-        document.getElementById('p-app-nama').innerText = name || '__________________';
-        document.getElementById('p-app-jawatan').innerText = jawatan || '__________________';
-        document.getElementById('p-app-tarikh').innerText = formatLocalDate(new Date());
+                <div class="relative w-full rounded-xl border-2 border-[#2b2d42] overflow-hidden shadow-inner bg-[#fcfbf7] flex flex-col items-center justify-center">
+                    <canvas id="sketchCanvas" width="1000" height="130" class="w-full h-auto block"></canvas>
+                </div>
+            </div>
+        </section>
 
-        const blank = document.createElement('canvas');
-        blank.width = canvas.width;
-        blank.height = canvas.height;
+    </main>
 
-        if (canvas.toDataURL() !== blank.toDataURL() && name) {
-            sigArea.innerHTML = `<img src="${canvas.toDataURL('image/png')}" class="sig-img" alt="Tandatangan Pengesah">`;
-        } else {
-            sigArea.innerHTML = `<div style="height: 50px;"></div>`;
-        }
-    }
+    <!-- MODAL LOG MASUK ADMIN -->
+    <div id="loginModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#fffef9] p-6 sm:p-8 sketch-box max-w-md w-full relative">
+            <div class="paper-tape"></div>
+            <div class="flex justify-between items-center mb-4 border-b-2 border-dashed border-slate-300 pb-2">
+                <h3 class="text-2xl font-bold sketch-font text-[#2b2d42]">Log Masuk Pentadbir</h3>
+                <button onclick="closeLoginModal()" class="text-slate-500 hover:text-red-600 font-bold text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold mb-1 text-slate-700">Pilih Peranan (Jawatan):</label>
+                    <select id="adminRole" class="w-full p-2.5 sketch-input text-sm font-sans focus:outline-none">
+                        <option value="Pengetua">Pengetua</option>
+                        <option value="PKP">PKP</option>
+                        <option value="PKHEM">PKHEM</option>
+                        <option value="PKKO">PKKO</option>
+                        <option value="GKBSM">GKBSM</option>
+                        <option value="GKBB">GKBB</option>
+                        <option value="GKBM">GKBM</option>
+                        <option value="GKBT">GKBT</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1 text-slate-700">Kata Laluan:</label>
+                    <input type="password" id="adminPassword" placeholder="Masukkan kata laluan..." class="w-full p-2.5 sketch-input text-sm font-sans focus:outline-none" required>
+                </div>
+                <div id="loginError" class="text-red-600 text-xs font-mono hidden">Kata laluan salah! Sila cuba lagi.</div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeLoginModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl font-bold text-sm">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-[#d90429] text-white rounded-xl font-bold text-sm sketch-font text-lg shadow-[2px_2px_0px_#000]">Masuk</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    function hantarPengesahan() {
-        if (activeOpenIndex === null) return;
-        let r = senaraiDataGlobal[activeOpenIndex];
+    <!-- MODAL BUAT PENGUMUMAN BARU -->
+    <div id="announcementModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#fffef9] p-6 sm:p-8 sketch-box max-w-lg w-full relative">
+            <div class="paper-tape"></div>
+            <div class="flex justify-between items-center mb-4 border-b-2 border-dashed border-slate-300 pb-2">
+                <h3 class="text-2xl font-bold sketch-font text-[#2b2d42]">Tambah Pengumuman Rasmi</h3>
+                <button onclick="closeAnnouncementModal()" class="text-slate-500 hover:text-red-600 font-bold text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form onsubmit="handlePostAnnouncement(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold mb-1 text-slate-700">Tajuk Pengumuman:</label>
+                    <input type="text" id="annTitle" placeholder="Contoh: Mesyuarat Guru Bil. 3/2026" class="w-full p-2.5 sketch-input text-sm font-sans focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1 text-slate-700">Isi Kandungan:</label>
+                    <textarea id="annContent" rows="4" placeholder="Tulis butiran pengumuman di sini..." class="w-full p-2.5 sketch-textarea text-sm font-sans focus:outline-none" required></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAnnouncementModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl font-bold text-sm">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-[#2b2d42] text-white rounded-xl font-bold text-sm sketch-font text-lg shadow-[2px_2px_0px_#000]">Terbitkan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        const name = document.getElementById('approverName').value;
-        const jawatan = document.getElementById('approverJawatan').value;
-        const canvas = document.getElementById('approverCanvas');
+    <!-- Footer Portal -->
+    <footer class="bg-[#2b2d42] text-[#fcfbf7] border-t-2 border-[#ffb703] mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2 sketch-font text-lg">
+                <span class="w-3 h-3 rounded-full bg-[#ffb703]"></span>
+                <span>Hab Pengisian Maklumat <strong>HARUM</strong> — SMK Kamarul Ariffin</span>
+            </div>
+            <div class="font-mono text-xs text-amber-200">
+                SEKOLAH BERKUALITI // KEMENJADIAN MURID
+            </div>
+        </div>
+    </footer>
 
-        const blank = document.createElement('canvas');
-        blank.width = canvas.width;
-        blank.height = canvas.height;
-        const appSigBase64 = canvas.toDataURL() !== blank.toDataURL() ? canvas.toDataURL('image/png') : "";
+    <!-- Skrip Aplikasi & Sambungan Google Sheet API -->
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwqTHutqr1Mw1ajxwm-Voo7ovSWC4fP2y3xqDK51U6g85lPnNYpIdFi5yU7_HtopS8ASg/exec";
 
-        if (!name || !appSigBase64) {
-            alert("Sila masukkan Nama Pengesah dan tandatangan digital (scribble) sebelum membuat pengesahan.");
-            return;
-        }
-
-        const data = {
-            rowIndex: r.rowIndex,
-            namaPegawai: r.namaPegawai,
-            jawatan: r.jawatan,
-            tajuk: r.tajuk,
-            tarikh: r.tarikh,
-            masa: r.masa,
-            tempat: r.tempat,
-            anjuran: r.anjuran,
-            pengerusi: r.pengerusi,
-            kehadiran: r.kehadiran,
-            butiran: r.butiran,
-            implikasi: r.implikasi,
-            tindakan: r.tindakan,
-            signature: r.signature,
-            statusKawalan: r.statusKawalan,
-            password: r.password,
-            statusPengesahan: "Telah disahkan / disemak",
-            approverName: name,
-            approverJawatan: jawatan,
-            approverSig: appSigBase64
+        const adminCredentials = {
+            "Pengetua": "sayapengetua",
+            "PKP": "sayapkp",
+            "PKHEM": "sayapkhem",
+            "PKKO": "sayapkko",
+            "GKBSM": "sayagkbsm",
+            "GKBB": "sayagkbb",
+            "GKBM": "sayagkbm",
+            "GKBT": "sayagkbt"
         };
 
-        const btn = event.target;
-        btn.disabled = true;
-        btn.innerText = "Sedang Menyimpan Pengesahan...";
+        let currentAdmin = localStorage.getItem('harum_current_admin') || null;
 
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(() => {
-            alert("Berjaya! Dokumen telah disahkan dan status dikemaskini.");
-            btn.disabled = false;
-            btn.innerText = "Sahkan & Kemaskini Status Rekod";
-            muatSenaraiRekod();
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Ralat sambungan. Sila cuba lagi.");
-            btn.disabled = false;
-            btn.innerText = "Sahkan & Kemaskini Status Rekod";
+        document.addEventListener("DOMContentLoaded", () => {
+            updateAuthUI();
+            fetchAnnouncements();
         });
-    }
 
-    function tutupDokumen() {
-        document.getElementById('paparanDokumen').style.display = 'none';
-    }
-</script>
+        function updateAuthUI() {
+            const authArea = document.getElementById("adminAuthArea");
+            const addBtnContainer = document.getElementById("addAnnouncementBtnContainer");
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            if (currentAdmin) {
+                authArea.innerHTML = `
+                    <div class="flex items-center gap-2 bg-[#fcfbf7] px-3 py-1.5 rounded-xl border-2 border-[#2b2d42] text-xs font-mono shadow-[2px_2px_0px_#2b2d42]">
+                        <span class="text-[#d90429] font-bold">👤 ${currentAdmin}</span>
+                        <button onclick="handleLogout()" class="text-slate-500 hover:text-red-600 font-bold ml-1" title="Log Keluar">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </div>
+                `;
+                addBtnContainer.classList.remove("hidden");
+            } else {
+                authArea.innerHTML = `
+                    <button onclick="openLoginModal()" class="px-4 py-2 bg-[#ffb703] text-[#2b2d42] font-bold sketch-box text-sm transition hover:bg-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-lock text-xs"></i> Log Masuk Admin
+                    </button>
+                `;
+                addBtnContainer.classList.add("hidden");
+            }
+        }
+
+        function openLoginModal() {
+            document.getElementById("loginModal").classList.remove("hidden");
+            document.getElementById("loginError").classList.add("hidden");
+            document.getElementById("adminPassword").value = "";
+        }
+
+        function closeLoginModal() {
+            document.getElementById("loginModal").classList.add("hidden");
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById("adminRole").value;
+            const pass = document.getElementById("adminPassword").value;
+
+            if (adminCredentials[role] && adminCredentials[role] === pass) {
+                currentAdmin = role;
+                localStorage.setItem('harum_current_admin', role);
+                closeLoginModal();
+                updateAuthUI();
+                renderAnnouncements();
+            } else {
+                document.getElementById("loginError").classList.remove("hidden");
+            }
+        }
+
+        function handleLogout() {
+            currentAdmin = null;
+            localStorage.removeItem('harum_current_admin');
+            updateAuthUI();
+            renderAnnouncements();
+        }
+
+        function openAnnouncementModal() {
+            document.getElementById("announcementModal").classList.remove("hidden");
+            document.getElementById("annTitle").value = "";
+            document.getElementById("annContent").value = "";
+        }
+
+        function closeAnnouncementModal() {
+            document.getElementById("announcementModal").classList.add("hidden");
+        }
+
+        let announcementsData = [];
+
+        async function fetchAnnouncements() {
+            const container = document.getElementById("announcementList");
+            try {
+                const response = await fetch(WEB_APP_URL);
+                announcementsData = await response.json();
+                renderAnnouncements();
+            } catch (error) {
+                container.innerHTML = `<p class="text-red-600 text-center py-4 italic">Gagal memuatkan data dari Google Sheet.</p>`;
+            }
+        }
+
+        async function handlePostAnnouncement(e) {
+            e.preventDefault();
+            const title = document.getElementById("annTitle").value;
+            const content = document.getElementById("annContent").value;
+            
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ms-MY', { day: 'numeric', month: 'short', year: 'numeric' });
+
+            const newAnnouncement = {
+                action: "add",
+                id: Date.now(),
+                title: title,
+                content: content,
+                author: currentAdmin,
+                date: dateStr
+            };
+
+            closeAnnouncementModal();
+            document.getElementById("announcementList").innerHTML = `<p class="text-slate-500 text-center py-4 italic">Menghantar pengumuman ke Google Sheet...</p>`;
+
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: "POST",
+                    body: JSON.stringify(newAnnouncement)
+                });
+                await fetchAnnouncements();
+            } catch (error) {
+                alert("Gagal menyimpan pengumuman.");
+                fetchAnnouncements();
+            }
+        }
+
+        async function deleteAnnouncement(id, author) {
+            if (currentAdmin !== author) {
+                alert("Anda hanya boleh memadam pengumuman yang anda buat sendiri!");
+                return;
+            }
+            if (confirm("Adakah anda pasti mahu memadam pengumuman ini?")) {
+                document.getElementById("announcementList").innerHTML = `<p class="text-slate-500 text-center py-4 italic">Memadam dari Google Sheet...</p>`;
+                try {
+                    await fetch(WEB_APP_URL, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "delete", id: id })
+                    });
+                    await fetchAnnouncements();
+                } catch (error) {
+                    alert("Gagal memadam pengumuman.");
+                    fetchAnnouncements();
+                }
+            }
+        }
+
+        function renderAnnouncements() {
+            const container = document.getElementById("announcementList");
+
+            if (announcementsData.length === 0) {
+                container.innerHTML = `<p class="text-slate-500 text-center py-4 italic">Tiada pengumuman rasmi buat masa ini.</p>`;
+                return;
+            }
+
+            container.innerHTML = announcementsData.map(item => {
+                const canDelete = currentAdmin === item.author;
+                return `
+                    <div class="bg-[#fcfbf7] p-4 sm:p-5 rounded-xl border-2 border-[#2b2d42] shadow-[2px_2px_0px_#2b2d42] relative">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                            <h3 class="text-xl font-bold sketch-font text-[#2b2d42]">${escapeHTML(String(item.title))}</h3>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-mono bg-amber-100 text-amber-900 px-2.5 py-1 rounded-md border border-amber-300">
+                                    <i class="fa-solid fa-user-pen mr-1"></i> ${escapeHTML(String(item.author))}
+                                </span>
+                                <span class="text-xs text-slate-500 font-mono">${escapeHTML(String(item.date))}</span>
+                                ${canDelete ? `
+                                    <button onclick="deleteAnnouncement(${item.id}, '${item.author}')" class="text-red-600 hover:text-red-800 text-sm p-1" title="Padam Pengumuman">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <p class="text-slate-700 text-base leading-relaxed whitespace-pre-line">${escapeHTML(String(item.content))}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        // --- SKRIP PENAPIS KATEGORI & CARIAN SISTEM ---
+        const searchInput = document.getElementById('searchApp');
+        const appCards = document.querySelectorAll('.app-card');
+        const noResults = document.getElementById('noResults');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+
+        let currentCategory = 'all';
+
+        function filterCategory(category) {
+            currentCategory = category;
+            
+            filterButtons.forEach(btn => {
+                if(btn.getAttribute('data-cat') === category) {
+                    btn.className = "filter-btn px-4 py-1.5 bg-[#ffb703] text-[#2b2d42] font-bold sketch-box text-base transition active-btn transform -rotate-1";
+                } else {
+                    btn.className = "filter-btn px-4 py-1.5 bg-[#fcfbf7] text-[#2b2d42] font-bold sketch-box text-base transition hover:bg-amber-100 transform rotate-1";
+                }
+            });
+
+            filterApps();
+        }
+
+        function filterApps() {
+            const query = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            appCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const name = card.getAttribute('data-name');
+                
+                const matchesCategory = (currentCategory === 'all' || category === currentCategory);
+                const matchesQuery = name.includes(query);
+
+                if (matchesCategory && matchesQuery) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        }
+
+        searchInput.addEventListener('input', filterApps);
+
+        // --- SKRIP ANIMASI LAKARAN TANGAN (SKETCH CANVAS) ---
+        const canvas = document.getElementById('sketchCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const schoolLogo = new Image();
+        schoolLogo.src = '/logo.png';
+
+        let sketchClouds = [
+            { x: 100, y: 25, speed: 0.08, size: 30 },
+            { x: 480, y: 18, speed: 0.06, size: 40 },
+            { x: 800, y: 30, speed: 0.07, size: 35 }
+        ];
+
+        let sketchBirds = [
+            { x: -30, y: 35, speed: 0.25, wingCycle: 0 },
+            { x: -160, y: 48, speed: 0.2, wingCycle: 20 }
+        ];
+
+        let sketchSway = 0;
+
+        function animateSketchScene() {
+            ctx.fillStyle = '#fcfbf7';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = '#2b2d42';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height - 18);
+            ctx.lineTo(canvas.width, canvas.height - 18);
+            ctx.stroke();
+
+            // Awan
+            ctx.fillStyle = 'rgba(43, 45, 66, 0.08)';
+            ctx.strokeStyle = '#2b2d42';
+            ctx.lineWidth = 1.5;
+            for (let c of sketchClouds) {
+                c.x += c.speed;
+                if (c.x > canvas.width + 80) c.x = -80;
+                
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.size * 0.6, 0, Math.PI * 2);
+                ctx.arc(c.x + c.size * 0.5, c.y - c.size * 0.2, c.size * 0.5, 0, Math.PI * 2);
+                ctx.arc(c.x + c.size * 1.0, c.y, c.size * 0.6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Burung
+            ctx.strokeStyle = '#2b2d42';
+            ctx.lineWidth = 2;
+            for (let b of sketchBirds) {
+                b.x += b.speed;
+                b.wingCycle += 0.02;
+                if (b.x > canvas.width + 40) {
+                    b.x = -50;
+                    b.y = 20 + Math.random() * 25;
+                }
+                
+                let bx = b.x;
+                let by = b.y + Math.sin(b.wingCycle) * 3;
+                
+                ctx.beginPath();
+                ctx.moveTo(bx - 8, by - 6);
+                ctx.lineTo(bx, by);
+                ctx.lineTo(bx + 8, by - 6);
+                ctx.stroke();
+            }
+
+            // Bangunan
+            let bX = 330, bY = 25, bW = 340, bH = 82;
+            ctx.strokeStyle = '#2b2d42';
+            ctx.lineWidth = 2.5;
+            ctx.strokeRect(bX, bY, bW, bH);
+            ctx.fillStyle = 'rgba(217, 4, 41, 0.04)';
+            ctx.fillRect(bX, bY, bW, bH);
+
+            ctx.beginPath();
+            ctx.moveTo(bX - 12, bY);
+            ctx.lineTo(bX + bW / 2, bY - 25);
+            ctx.lineTo(bX + bW + 12, bY);
+            ctx.closePath();
+            ctx.strokeStyle = '#2b2d42';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            ctx.fillStyle = 'rgba(43, 45, 66, 0.1)';
+            ctx.fill();
+
+            ctx.strokeRect(bX + 90, bY + 12, bW - 180, 24);
+            ctx.fillStyle = '#2b2d42';
+            ctx.font = 'bold 13px "Caveat", cursive';
+            ctx.textAlign = 'center';
+            ctx.fillText('SEMEKAR', bX + bW / 2, bY + 29);
+
+            try {
+                ctx.drawImage(schoolLogo, bX + 100, bY + 14, 20, 20);
+            } catch(e) {}
+
+            let winCols = 7, winRows = 2;
+            let startWX = bX + 35, startWY = bY + 44;
+            for (let r = 0; r < winRows; r++) {
+                for (let col = 0; col < winCols; col++) {
+                    ctx.strokeRect(startWX + col * 40, startWY + r * 20, 18, 14);
+                }
+            }
+
+            ctx.strokeRect(bX + bW / 2 - 15, bY + 48, 30, 34);
+
+            // Pokok
+            sketchSway += 0.02;
+            let sway = Math.sin(sketchSway) * 0.05;
+
+            drawSketchTree(160, canvas.height - 18, sway);
+            drawSketchTree(840, canvas.height - 18, -sway);
+
+            requestAnimationFrame(animateSketchScene);
+        }
+
+        function drawSketchTree(x, y, angle) {
+            ctx.save();
+            ctx.translate(x, y);
+            
+            ctx.strokeStyle = '#2b2d42';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -35);
+            ctx.stroke();
+
+            ctx.rotate(angle);
+            ctx.strokeStyle = '#2b2d42';
+            ctx.lineWidth = 2;
+            ctx.fillStyle = 'rgba(5, 150, 105, 0.15)';
+            
+            ctx.beginPath();
+            ctx.arc(0, -50, 22, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        schoolLogo.onload = () => {};
+        animateSketchScene();
+    </script>
 </body>
 </html>
