@@ -168,6 +168,7 @@
                                 <th>Nama Pegawai</th>
                                 <th>Tajuk / Perkara</th>
                                 <th>Status</th>
+                                <th>Kemaskini Terakhir</th>
                                 <th class="text-end">Tindakan</th>
                             </tr>
                         </thead>
@@ -471,7 +472,7 @@
             }
 
             if (senaraiDataGlobal.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Tiada rekod ditemui.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Tiada rekod ditemui.</td></tr>';
             } else {
                 senaraiDataGlobal.forEach((row, idx) => {
                     let badge = row.statusKawalan === 'Kawalan' 
@@ -479,6 +480,7 @@
                         : '<span class="badge bg-success">Biasa</span>';
 
                     let formattedDate = formatLocalDate(row.tarikh);
+                    let lastUpdatedText = row.lastUpdated ? row.lastUpdated : '-';
 
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -486,6 +488,7 @@
                         <td class="fw-semibold">${row.namaPegawai}</td>
                         <td>${row.tajuk}</td>
                         <td>${badge}</td>
+                        <td><small class="text-muted">${lastUpdatedText}</small></td>
                         <td class="text-end">
                             <button class="btn btn-sm btn-warning fw-semibold me-1" onclick="sediaUntukKemaskini(${idx})">Kemaskini</button>
                             <button class="btn btn-sm btn-primary fw-semibold" onclick="bukaRekod(${idx})">Buka & Cetak</button>
@@ -643,7 +646,6 @@
             writerSigArea.innerHTML = `<div style="height: 50px;"></div>`;
         }
 
-        // Paparkan catatan masa kemaskini jika rekod pernah dikemaskini
         let updateNoteEl = document.getElementById('p-update-note');
         if (r.lastUpdated) {
             updateNoteEl.innerText = "* Catatan: Rekod terakhir dikemaskini pada " + r.lastUpdated;
