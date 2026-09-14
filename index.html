@@ -45,7 +45,7 @@
     <!-- Menu Tab -->
     <ul class="nav nav-pills justify-content-center mb-4 no-print" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active fw-bold px-4" data-bs-toggle="pill" data-bs-target="#tab-pengisian" type="button">1. Pengisian</button>
+            <button class="nav-link active fw-bold px-4" id="btn-tab-pengisian" data-bs-toggle="pill" data-bs-target="#tab-pengisian" type="button">1. Pengisian</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link fw-bold px-4" data-bs-toggle="pill" data-bs-target="#tab-cetakan" type="button" onclick="muatSenaraiRekod()">2. Cetakan & Senarai Rekod</button>
@@ -56,7 +56,10 @@
         <!-- TAB 1: PENGISIAN -->
         <div class="tab-pane fade show active" id="tab-pengisian" role="tabpanel">
             <div class="card-box no-print">
-                <h4 class="mb-3 fw-bold">Borang Minit Curai</h4>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold m-0" id="formTitle">Borang Minit Curai</h4>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="cancelEditBtn" style="display: none;" onclick="resetFormMode()">Batal Kemaskini</button>
+                </div>
                 <form id="minitForm">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nama Pegawai</label>
@@ -130,7 +133,7 @@
 
                     <!-- BUTANG SIMPAN DIBAHAGIAN AKHIR -->
                     <div class="d-grid">
-                        <button type="button" class="btn btn-success btn-lg fw-bold" onclick="hantarData()">Simpan Rekod ke Google Sheets</button>
+                        <button type="button" class="btn btn-success btn-lg fw-bold" id="submitBtn" onclick="hantarData()">Simpan Rekod ke Google Sheets</button>
                     </div>
                 </form>
             </div>
@@ -257,6 +260,18 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4J5L3v4oYDfTRVkfI839jBqrF24pgkjoggsW7oBS14FFDlgo3fOVqwWNA9TDCC74d/exec";
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1H3J_6o_kHHZqwlSy7pAlYxX_KdCAILxsYErnnNIU-JA/export?format=csv";
     let senaraiDataGlobal = [];
+    let editingRowIndex = null;
+
+    // Fungsi Pembantu Pemformatan Tarikh Seragam (DD/MM/YYYY)
+    function formatLocalDate(dateStr) {
+        if (!dateStr) return '__________________';
+        let d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        let day = String(d.getDate()).padStart(2, '0');
+        let month = String(d.getMonth() + 1).padStart(2, '0');
+        let year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
 
     // Setup Signature Pad Canvas
     function initCanvas(canvasId) {
@@ -321,11 +336,25 @@
         document.getElementById('ruangKekunci').style.display = checked ? 'block' : 'none';
     }
 
+    function resetFormMode() {
+        editingRowIndex = null;
+        document.getElementById('minitForm').reset();
+        clearSig('writerCanvas');
+        document.getElementById('ruangKekunci').style.display = 'none';
+        document.getElementById('formTitle').innerText = "Borang Minit Curai";
+        document.getElementById('submitBtn').innerText = "Simpan Rekod ke Google Sheets";
+        document.getElementById('cancelEditBtn').style.display = 'none';
+    }
+
     function hantarData() {
         const isKawalan = document.getElementById('isKawalan').checked;
         const password = document.getElementById('kawalanPassword').value;
         const writerCanvas = document.getElementById('writerCanvas');
-        const signatureBase64 = writerCanvas.toDataURL('image/png');
+        
+        const blank = document.createElement('canvas');
+        blank.width = writerCanvas.width;
+        blank.height = writerCanvas.height;
+        const signatureBase64 = writerCanvas.toDataURL() !== blank.toDataURL() ? writerCanvas.toDataURL('image/png') : "";
 
         if (isKawalan && !password) {
             alert("Sila masukkan kata laluan untuk Minit Curai Kawalan.");
@@ -333,6 +362,7 @@
         }
 
         const data = {
+            rowIndex: editingRowIndex,
             namaPegawai: document.getElementById('namaPegawai').value,
             jawatan: document.getElementById('jawatan').value,
             tajuk: document.getElementById('tajuk').value,
@@ -357,7 +387,7 @@
 
         const btn = event.target;
         btn.disabled = true;
-        btn.innerText = "Sedang Menyimpan...";
+        btn.innerText = "Sedang Memproses...";
 
         fetch(SCRIPT_URL, {
             method: 'POST',
@@ -366,18 +396,15 @@
             body: JSON.stringify(data)
         })
         .then(() => {
-            alert("Berjaya! Rekod telah disimpan ke Google Sheets.");
-            document.getElementById('minitForm').reset();
-            clearSig('writerCanvas');
-            document.getElementById('ruangKekunci').style.display = 'none';
+            alert(editingRowIndex ? "Berjaya! Rekod telah dikemaskini." : "Berjaya! Rekod baharu telah disimpan.");
+            resetFormMode();
             btn.disabled = false;
-            btn.innerText = "Simpan Rekod ke Google Sheets";
         })
         .catch(err => {
             console.error(err);
             alert("Ralat sambungan. Sila cuba lagi.");
             btn.disabled = false;
-            btn.innerText = "Simpan Rekod ke Google Sheets";
+            btn.innerText = editingRowIndex ? "Kemaskini Rekod" : "Simpan Rekod ke Google Sheets";
         });
     }
 
@@ -398,6 +425,7 @@
                 let r = rows[i];
                 if (r && r.length >= 2 && r[1]) {
                     let record = {
+                        rowIndex: i + 1,
                         timestamp: r[0],
                         namaPegawai: r[1],
                         jawatan: r[2],
@@ -427,13 +455,16 @@
                         ? '<span class="badge bg-danger">Kawalan (Rahsia)</span>' 
                         : '<span class="badge bg-success">Biasa</span>';
 
+                    let formattedDate = formatLocalDate(row.tarikh);
+
                     let tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${row.tarikh || '-'}</td>
+                        <td>${formattedDate}</td>
                         <td class="fw-semibold">${row.namaPegawai}</td>
                         <td>${row.tajuk}</td>
                         <td>${badge}</td>
                         <td class="text-end">
+                            <button class="btn btn-sm btn-warning fw-semibold me-1" onclick="sediaUntukKemaskini(${idx})">Kemaskini</button>
                             <button class="btn btn-sm btn-primary fw-semibold" onclick="bukaRekod(${idx})">Buka & Cetak</button>
                         </td>
                     `;
@@ -450,7 +481,6 @@
         });
     }
 
-    // Parser CSV Lanjutan yang menyokong Multi-line Text & Quotes
     function parseCSVAdvanced(text) {
         let rows = [];
         let currentRow = [];
@@ -501,11 +531,61 @@
         return rows;
     }
 
+    function sediaUntukKemaskini(idx) {
+        let r = senaraiDataGlobal[idx];
+
+        if (r.statusKawalan === 'Kawalan') {
+            let pass = prompt("Dokumen ini adalah Minit Curai Kawalan (Rahsia). Sila masukkan kata laluan untuk mengemaskini:");
+            if (pass !== r.password) {
+                alert("Kata laluan salah! Akses ditolak.");
+                return;
+            }
+        }
+
+        editingRowIndex = r.rowIndex;
+        document.getElementById('namaPegawai').value = r.namaPegawai || '';
+        document.getElementById('jawatan').value = r.jawatan || '';
+        document.getElementById('tajuk').value = r.tajuk || '';
+        document.getElementById('tarikh').value = r.tarikh || '';
+        document.getElementById('masa').value = r.masa || '';
+        document.getElementById('tempat').value = r.tempat || '';
+        document.getElementById('anjuran').value = r.anjuran || '';
+        document.getElementById('pengerusi').value = r.pengerusi || '';
+        document.getElementById('kehadiran').value = r.kehadiran || '';
+        document.getElementById('butiran').value = r.butiran || '';
+        document.getElementById('implikasi').value = r.implikasi || '';
+        document.getElementById('tindakan').value = r.tindakan || '';
+        
+        let isKawalan = (r.statusKawalan === 'Kawalan');
+        document.getElementById('isKawalan').checked = isKawalan;
+        toggleKekunci();
+        document.getElementById('kawalanPassword').value = r.password || '';
+
+        clearSig('writerCanvas');
+        if (r.signature && r.signature.startsWith('data:image')) {
+            const canvas = document.getElementById('writerCanvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0);
+            };
+            img.src = r.signature;
+        }
+
+        document.getElementById('formTitle').innerText = "Kemaskini Minit Curai (Baris: " + r.rowIndex + ")";
+        document.getElementById('submitBtn').innerText = "Kemaskini Rekod";
+        document.getElementById('cancelEditBtn').style.display = 'inline-block';
+
+        var tabEl = document.getElementById('btn-tab-pengisian');
+        var tab = new bootstrap.Tab(tabEl);
+        tab.show();
+    }
+
     function bukaRekod(idx) {
         let r = senaraiDataGlobal[idx];
 
         if (r.statusKawalan === 'Kawalan') {
-            let pass = prompt("Dokumen ini adalah Minit Curai Kawalan (Rahsia). Sila masukkan kata laluan:");
+            let pass = prompt("Dokumen ini adalah Minit Curai Kawalan (Rahsia). Sila masukkan kata laluan untuk membuka:");
             if (pass !== r.password) {
                 alert("Kata laluan salah! Akses ditolak.");
                 return;
@@ -515,7 +595,12 @@
         document.getElementById('p-nama').innerText = r.namaPegawai || '-';
         document.getElementById('p-jawatan').innerText = r.jawatan || '-';
         document.getElementById('p-tajuk').innerText = r.tajuk || '-';
-        document.getElementById('p-tarikh').innerText = r.tarikh || '-';
+        
+        // Tarikh penulis diselaraskan menggunakan format DD/MM/YYYY
+        let formattedTarikh = formatLocalDate(r.tarikh);
+        document.getElementById('p-tarikh').innerText = formattedTarikh;
+        document.getElementById('p-sig-tarikh').innerText = formattedTarikh;
+
         document.getElementById('p-masa').innerText = r.masa || '-';
         document.getElementById('p-tempat').innerText = r.tempat || '-';
         document.getElementById('p-anjuran').innerText = r.anjuran || '-';
@@ -528,7 +613,6 @@
 
         document.getElementById('p-sig-nama').innerText = r.namaPegawai || '-';
         document.getElementById('p-sig-jawatan').innerText = r.jawatan || '-';
-        document.getElementById('p-sig-tarikh').innerText = r.tarikh || '__________________';
 
         let writerSigArea = document.getElementById('p-writer-sig-area');
         if (r.signature && r.signature.startsWith('data:image')) {
@@ -554,7 +638,9 @@
 
         document.getElementById('p-app-nama').innerText = name || '__________________';
         document.getElementById('p-app-jawatan').innerText = jawatan || '__________________';
-        document.getElementById('p-app-tarikh').innerText = new Date().toLocaleDateString('ms-MY');
+        
+        // Tarikh pengesah diselaraskan menggunakan format DD/MM/YYYY yang sama
+        document.getElementById('p-app-tarikh').innerText = formatLocalDate(new Date());
 
         const blank = document.createElement('canvas');
         blank.width = canvas.width;
