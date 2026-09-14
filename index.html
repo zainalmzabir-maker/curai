@@ -179,7 +179,7 @@
                 <!-- Paparan Dokumen A4 untuk Cetakan & Pengesahan Pelulus -->
                 <div id="paparanDokumen" style="display: none;" class="mt-4 pt-4 border-top">
                     
-                    <!-- Ruang Pengesahan Pelulus -->
+                    <!-- Ruang Pengesahan Pelulus dengan Butang Sahkan -->
                     <div class="card bg-light p-3 mb-4 no-print border-primary">
                         <h5 class="fw-bold text-primary mb-3">Ruang Pengesahan / Pelulus (Diisi Semasa Cetakan)</h5>
                         <div class="row">
@@ -192,15 +192,18 @@
                                 <input type="text" class="form-control form-control-sm" id="approverJawatan" placeholder="Cth: Pengetua SMKKA" oninput="updateApproverPreview()">
                             </div>
                         </div>
-                        <div class="mb-2">
+                        <div class="mb-3">
                             <label class="form-label small fw-semibold">Tandatangan Pengesah (Scribble):</label>
                             <canvas id="approverCanvas" class="sig-canvas" style="height: 90px;"></canvas>
                             <button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="clearSig('approverCanvas'); updateApproverPreview();">Padam Tandatangan Pelulus</button>
                         </div>
+                        <div class="d-grid">
+                            <button type="button" class="btn btn-primary fw-bold" onclick="hantarPengesahan()">Sahkan & Kemaskini Status Rekod</button>
+                        </div>
                     </div>
 
                     <div class="text-end mb-3 no-print">
-                        <button class="btn btn-primary fw-semibold" onclick="window.print()">Cetak / Simpan PDF (A4)</button>
+                        <button class="btn btn-success fw-semibold" onclick="window.print()">Cetak / Simpan PDF (A4)</button>
                         <button class="btn btn-secondary fw-semibold" onclick="tutupDokumen()">Tutup</button>
                     </div>
 
@@ -286,6 +289,7 @@
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1H3J_6o_kHHZqwlSy7pAlYxX_KdCAILxsYErnnNIU-JA/export?format=csv";
     let senaraiDataGlobal = [];
     let editingRowIndex = null;
+    let activeOpenIndex = null; // Menyimpan indeks rekod yang sedang dibuka untuk pengesahan
 
     function formatLocalDate(dateStr) {
         if (!dateStr) return '__________________';
@@ -400,7 +404,8 @@
             tindakan: document.getElementById('tindakan').value,
             signature: signatureBase64,
             statusKawalan: isKawalan ? "Kawalan" : "Biasa",
-            password: isKawalan ? password : ""
+            password: isKawalan ? password : "",
+            statusPengesahan: "Belum Disahkan"
         };
 
         if(!data.namaPegawai || !data.tajuk || !data.tarikh) {
@@ -465,7 +470,11 @@
                         signature: r[13] || "",
                         statusKawalan: (r[14] || "Biasa").trim(),
                         password: (r[15] || "").trim(),
-                        lastUpdated: r[16] || ""
+                        lastUpdated: r[16] || "",
+                        statusPengesahan: (r[17] || "Belum Disahkan").trim(),
+                        approverName: r[18] || "",
+                        approverJawatan: r[19] || "",
+                        approverSig: r[20] || ""
                     };
                     senaraiDataGlobal.push(record);
                 }
@@ -476,8 +485,14 @@
             } else {
                 senaraiDataGlobal.forEach((row, idx) => {
                     let badge = row.statusKawalan === 'Kawalan' 
-                        ? '<span class="badge bg-danger">Kawalan (Rahsia)</span>' 
-                        : '<span class="badge bg-success">Biasa</span>';
+                        ? '<span class="badge bg-danger mb-1">Kawalan (Rahsia)</span><br>' 
+                        : '';
+
+                    if (row.statusPengesahan === 'Telah disahkan / disemak') {
+                        badge += '<span class="badge bg-primary">Telah disahkan / disemak</span>';
+                    } else {
+                        badge += '<span class="badge bg-secondary">Belum disahkan</span>';
+                    }
 
                     let formattedDate = formatLocalDate(row.tarikh);
                     let lastUpdatedText = row.lastUpdated ? row.lastUpdated : '-';
@@ -609,6 +624,7 @@
 
     function bukaRekod(idx) {
         let r = senaraiDataGlobal[idx];
+        activeOpenIndex = idx;
 
         if (r.statusKawalan === 'Kawalan') {
             let pass = prompt("Dokumen ini adalah Minit Curai Kawalan (Rahsia). Sila masukkan kata laluan untuk membuka:");
@@ -646,17 +662,29 @@
             writerSigArea.innerHTML = `<div style="height: 50px;"></div>`;
         }
 
+        // Muat data pengesah sedia ada jika ada
+        document.getElementById('approverName').value = r.approverName || '';
+        document.getElementById('approverJawatan').value = r.approverJawatan || '';
+        
+        clearSig('approverCanvas');
+        if (r.approverSig && r.approverSig.startsWith('data:image')) {
+            const canvas = document.getElementById('approverCanvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0);
+            };
+            img.src = r.approverSig;
+        }
+
+        updateApproverPreview();
+
         let updateNoteEl = document.getElementById('p-update-note');
         if (r.lastUpdated) {
             updateNoteEl.innerText = "* Catatan: Rekod terakhir dikemaskini pada " + r.lastUpdated;
         } else {
             updateNoteEl.innerText = "";
         }
-
-        document.getElementById('approverName').value = '';
-        document.getElementById('approverJawatan').value = '';
-        clearSig('approverCanvas');
-        updateApproverPreview();
 
         document.getElementById('paparanDokumen').style.display = 'block';
         document.getElementById('paparanDokumen').scrollIntoView({ behavior: 'smooth' });
@@ -681,6 +709,71 @@
         } else {
             sigArea.innerHTML = `<div style="height: 50px;"></div>`;
         }
+    }
+
+    function hantarPengesahan() {
+        if (activeOpenIndex === null) return;
+        let r = senaraiDataGlobal[activeOpenIndex];
+
+        const name = document.getElementById('approverName').value;
+        const jawatan = document.getElementById('approverJawatan').value;
+        const canvas = document.getElementById('approverCanvas');
+
+        const blank = document.createElement('canvas');
+        blank.width = canvas.width;
+        blank.height = canvas.height;
+        const appSigBase64 = canvas.toDataURL() !== blank.toDataURL() ? canvas.toDataURL('image/png') : "";
+
+        if (!name || !appSigBase64) {
+            alert("Sila masukkan Nama Pengesah dan tandatangan digital (scribble) sebelum membuat pengesahan.");
+            return;
+        }
+
+        const data = {
+            rowIndex: r.rowIndex,
+            namaPegawai: r.namaPegawai,
+            jawatan: r.jawatan,
+            tajuk: r.tajuk,
+            tarikh: r.tarikh,
+            masa: r.masa,
+            tempat: r.tempat,
+            anjuran: r.anjuran,
+            pengerusi: r.pengerusi,
+            kehadiran: r.kehadiran,
+            butiran: r.butiran,
+            implikasi: r.implikasi,
+            tindakan: r.tindakan,
+            signature: r.signature,
+            statusKawalan: r.statusKawalan,
+            password: r.password,
+            statusPengesahan: "Telah disahkan / disemak",
+            approverName: name,
+            approverJawatan: jawatan,
+            approverSig: appSigBase64
+        };
+
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerText = "Sedang Menyimpan Pengesahan...";
+
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            alert("Berjaya! Dokumen telah disahkan dan status dikemaskini.");
+            btn.disabled = false;
+            btn.innerText = "Sahkan & Kemaskini Status Rekod";
+            muatSenaraiRekod();
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Ralat sambungan. Sila cuba lagi.");
+            btn.disabled = false;
+            btn.innerText = "Sahkan & Kemaskini Status Rekod";
+        });
     }
 
     function tutupDokumen() {
