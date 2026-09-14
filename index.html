@@ -3,376 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Minit Curai SMK Kamarul Ariffin</title>
-    <!-- Google Fonts: Barlow -->
+    <title>Minit Curai SMK Kamarul Ariffin</title>
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f4f7f6;
-            font-family: 'Barlow', sans-serif;
-            color: #333;
-        }
-        .app-container {
-            max-width: 1250px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-        .form-card, .preview-card {
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-            padding: 30px;
-            margin-bottom: 25px;
-            border-top: 4px solid #1e3c72;
-        }
+        body { background-color: #f4f7f6; font-family: 'Barlow', sans-serif; color: #333; }
+        .app-container { max-width: 1100px; margin: 20px auto; padding: 15px; }
+        .card-box { background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 25px; margin-bottom: 20px; border-top: 4px solid #1e3c72; }
         
-        /* A4 Preview Styling */
-        .a4-page {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 15mm 20mm;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            box-sizing: border-box;
-            font-size: 11pt;
-            color: #111;
-            line-height: 1.4;
-            font-family: 'Barlow', sans-serif;
-        }
-
-        /* Grafik Header Laporan */
-        .report-header {
-            display: flex;
-            align-items: center;
-            border-bottom: 3px double #1e3c72;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-        }
-        .school-logo {
-            width: 75px;
-            height: 75px;
-            object-fit: contain;
-            margin-right: 15px;
-        }
-        .header-text {
-            flex-grow: 1;
-            text-align: center;
-        }
-        .kpm-sub {
-            font-size: 9pt;
-            font-weight: 600;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .document-title {
-            font-weight: 700;
-            font-size: 14pt;
-            color: #1e3c72;
-            margin: 2px 0;
-            text-transform: uppercase;
-        }
-        .document-subtitle {
-            font-weight: 700;
-            font-size: 12pt;
-            color: #d9534f;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .minit-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-        .minit-table td {
-            padding: 5px 4px;
-            vertical-align: top;
-        }
-        .col-num {
-            width: 25px;
-            font-weight: 600;
-            color: #1e3c72;
-        }
-        .col-label {
-            width: 210px;
-            font-weight: 600;
-        }
-        .col-sep {
-            width: 15px;
-            text-align: center;
-            font-weight: 600;
-        }
-        .col-val {
-            word-break: break-word;
-            font-weight: 400;
-        }
-        .section-header {
-            font-weight: 700;
-            font-size: 11pt;
-            background-color: #f0f4f8;
-            color: #1e3c72;
-            padding: 5px 8px;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            border-left: 4px solid #1e3c72;
-            text-transform: uppercase;
-        }
-        .content-box {
-            min-height: 60px;
-            white-space: pre-wrap;
-            margin-bottom: 10px;
-            padding: 5px 8px;
-            background-color: #fafbfc;
-            border: 1px solid #eee;
-            border-radius: 4px;
-        }
-        .signature-section {
-            margin-top: 35px;
-            page-break-inside: avoid;
-        }
-        .signature-line {
-            border-top: 1px solid #333;
-            width: 220px;
-            margin-top: 40px;
-            margin-bottom: 5px;
-        }
+        /* A4 Styling */
+        .a4-page { width: 210mm; min-height: 297mm; padding: 15mm 20mm; margin: 0 auto; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); box-sizing: border-box; font-size: 11pt; line-height: 1.4; color: #000; }
+        .report-header { display: flex; align-items: center; border-bottom: 3px double #1e3c72; padding-bottom: 10px; margin-bottom: 15px; }
+        .school-logo { width: 65px; height: 65px; object-fit: contain; margin-right: 15px; }
+        .minit-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .minit-table td { padding: 4px; vertical-align: top; }
+        .section-header { font-weight: bold; background-color: #f0f4f8; color: #1e3c72; padding: 4px 8px; margin-top: 10px; margin-bottom: 5px; border-left: 3px solid #1e3c72; font-size: 10pt; text-transform: uppercase; }
+        .content-box { min-height: 50px; white-space: pre-wrap; padding: 5px; background: #fafbfc; border: 1px solid #eee; margin-bottom: 10px; }
+        .signature-line { border-top: 1px solid #333; width: 200px; margin-top: 30px; margin-bottom: 5px; }
         
         @media print {
-            body * {
-                visibility: hidden;
-            }
-            .a4-page, .a4-page * {
-                visibility: visible;
-            }
-            .a4-page {
-                position: absolute;
-                left: 0;
-                top: 0;
-                box-shadow: none;
-                margin: 0;
-                width: 100%;
-                padding: 10mm;
-            }
-            .no-print {
-                display: none !important;
-            }
+            body * { visibility: hidden; }
+            .a4-page, .a4-page * { visibility: visible; }
+            .a4-page { position: absolute; left: 0; top: 0; box-shadow: none; margin: 0; width: 100%; padding: 10mm; }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
 <body>
 
 <div class="container app-container">
-    <div class="row no-print">
-        <div class="col-12 text-center mb-4">
-            <h2 class="fw-bold text-primary">Sistem Pengurusan Minit Curai</h2>
-            <p class="text-muted">SMK Kamarul Ariffin | Pangkalan Data Google Sheets & GitHub Pages</p>
-        </div>
+    <div class="text-center mb-3 no-print">
+        <h3 class="fw-bold text-primary">Sistem Minit Curai SMK Kamarul Ariffin</h3>
     </div>
 
-    <div class="row">
-        <!-- Borang Pengisian -->
-        <div class="col-lg-6 no-print">
-            <div class="form-card">
-                <h4 class="mb-4 fw-bold text-dark">Borang Pengisian Minit Curai</h4>
+    <!-- Menu Tab -->
+    <ul class="nav nav-pills justify-content-center mb-4 no-print" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold px-4" id="tab-pengisian-btn" data-bs-toggle="pill" data-bs-target="#tab-pengisian" type="button">1. Pengisian</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold px-4" id="tab-cetakan-btn" data-bs-toggle="pill" data-bs-target="#tab-cetakan" type="button" onclick="muatSenaraiRekod()">2. Cetakan & Senarai Rekod</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="pills-tabContent">
+        <!-- TAB 1: PENGISIAN -->
+        <div class="tab-pane fade show active" id="tab-pengisian" role="tabpanel">
+            <div class="card-box no-print">
+                <h4 class="mb-3 fw-bold">Borang Minit Curai</h4>
                 <form id="minitForm">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Nama Pegawai</label>
-                        <input type="text" class="form-control" id="namaPegawai" required oninput="updatePreview()">
+                        <input type="text" class="form-control" id="namaPegawai" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Jawatan</label>
-                        <input type="text" class="form-control" id="jawatan" required oninput="updatePreview()">
+                        <input type="text" class="form-control" id="jawatan" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Tajuk / Perkara</label>
-                        <input type="text" class="form-control" id="tajuk" required oninput="updatePreview()">
+                        <input type="text" class="form-control" id="tajuk" required>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Tarikh</label>
-                            <input type="date" class="form-control" id="tarikh" required oninput="updatePreview()">
+                            <input type="date" class="form-control" id="tarikh" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-semibold">Masa</label>
-                            <input type="text" class="form-control" id="masa" placeholder="Cth: 8.00 pagi - 5.00 petang" required oninput="updatePreview()">
+                            <input type="text" class="form-control" id="masa" placeholder="Cth: 8.00 pagi - 5.00 petang" required>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Tempat</label>
-                        <input type="text" class="form-control" id="tempat" required oninput="updatePreview()">
+                        <input type="text" class="form-control" id="tempat" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Anjuran</label>
-                        <input type="text" class="form-control" id="anjuran" required oninput="updatePreview()">
+                        <input type="text" class="form-control" id="anjuran" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Pengerusi</label>
-                        <input type="text" class="form-control" id="pengerusi" required oninput="updatePreview()">
+                        <input type="text" class="form-control" id="pengerusi" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Kehadiran</label>
-                        <input type="text" class="form-control" id="kehadiran" placeholder="Cth: Rujuk senarai / Semua pegawai berkenaan" required oninput="updatePreview()">
+                        <input type="text" class="form-control" id="kehadiran" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">10. Butiran Mesyuarat / Taklimat / Perbincangan / Kursus</label>
-                        <textarea class="form-control" id="butiran" rows="4" required oninput="updatePreview()"></textarea>
+                        <textarea class="form-control" id="butiran" rows="4" required></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">11. Implikasi Kepada SMK Kamarul Ariffin</label>
-                        <textarea class="form-control" id="implikasi" rows="3" required oninput="updatePreview()"></textarea>
+                        <textarea class="form-control" id="implikasi" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">12. Tindakan Susulan SMK Kamarul Ariffin</label>
-                        <textarea class="form-control" id="tindakan" rows="3" required oninput="updatePreview()"></textarea>
+                        <textarea class="form-control" id="tindakan" rows="3" required></textarea>
                     </div>
-                    
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <button type="button" class="btn btn-success px-4 me-md-2 fw-semibold" onclick="saveDataToGoogleSheets()">Simpan ke Google Sheets</button>
-                        <button type="button" class="btn btn-primary px-4 fw-semibold" onclick="window.print()">Cetak / Simpan PDF (A4)</button>
+
+                    <!-- Bahagian Minit Curai Kawalan / Rahsia -->
+                    <div class="p-3 bg-light border rounded mb-4">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="isKawalan" onchange="toggleKekunci()">
+                            <label class="form-check-label fw-bold text-danger" for="isKawalan">Simpan sebagai Minit Curai Kawalan (Rahsia)</label>
+                        </div>
+                        <div id="ruangKekunci" style="display: none;">
+                            <label class="form-label fw-semibold small">Cipta Kata Laluan (Password):</label>
+                            <input type="password" class="form-control form-control-sm" id="kawalanPassword" placeholder="Masukkan kata laluan">
+                        </div>
+                    </div>
+
+                    <!-- BUTANG SIMPAN DIBAHAGIAN AKHIR -->
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-success btn-lg fw-bold" onclick="hantarData()">Simpan Rekod ke Google Sheets</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Paparan A4 (Live Preview & Print) -->
-        <div class="col-lg-6">
-            <div class="preview-card p-0 overflow-auto">
-                <div class="p-3 bg-dark text-white no-print d-flex justify-content-between align-items-center">
-                    <span class="fw-semibold">Pratonton Dokumen A4 Rasmi</span>
-                    <button class="btn btn-light btn-sm fw-semibold" onclick="window.print()">Cetak A4</button>
+        <!-- TAB 2: CETAKAN & SENARAI REKOD -->
+        <div class="tab-pane fade" id="tab-cetakan" role="tabpanel">
+            <div class="card-box">
+                <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+                    <h4 class="fw-bold m-0">Senarai Rekod Minit Curai</h4>
+                    <button class="btn btn-outline-primary btn-sm" onclick="muatSenaraiRekod()">Muat Semula</button>
                 </div>
-                
-                <div class="p-4 bg-light">
-                    <div class="a4-page" id="printArea">
-                        <!-- Grafik Header Rasmi Sekolah (Mengambil logo.png dari folder yang sama di GitHub) -->
-                        <div class="report-header">
-                            <img src="logo.png" alt="Logo SMK Kamarul Ariffin" class="school-logo" onerror="this.style.display='none'">
-                            <div class="header-text">
-                                <div class="kpm-sub">Kementerian Pendidikan Malaysia</div>
-                                <div class="document-title">Sekolah Menengah Kebangsaan Kamarul Ariffin</div>
-                                <div class="document-subtitle">Minit Curai Rasmi</div>
+
+                <div id="statusMuat" class="text-center py-4">Sedang memuatkan senarai...</div>
+
+                <div class="table-responsive no-print" id="tabelRekodWrapper" style="display: none;">
+                    <table class="table table-striped align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Tarikh</th>
+                                <th>Nama Pegawai</th>
+                                <th>Tajuk / Perkara</th>
+                                <th>Status</th>
+                                <th class="text-end">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelRekodBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Paparan Dokumen A4 untuk Cetakan -->
+                <div id="paparanDokumen" style="display: none;" class="mt-4 pt-4 border-top">
+                    <div class="text-end mb-3 no-print">
+                        <button class="btn btn-primary fw-semibold" onclick="window.print()">Cetak / Simpan PDF (A4)</button>
+                        <button class="btn btn-secondary fw-semibold" onclick="tutupDokumen()">Tutup</button>
+                    </div>
+
+                    <div class="d-flex justify-content-center">
+                        <div class="a4-page">
+                            <div class="report-header">
+                                <img src="logo.png" alt="Logo" class="school-logo" onerror="this.style.display='none'">
+                                <div style="flex-grow: 1; text-align: center;">
+                                    <div style="font-size: 8pt; font-weight: bold; color: #555;">KEMENTERIAN PENDIDIKAN MALAYSIA</div>
+                                    <div style="font-weight: bold; font-size: 13pt; color: #1e3c72; text-transform: uppercase;">SEKOLAH MENENGAH KEBANGSAAN KAMARUL ARIFFIN</div>
+                                    <div style="font-weight: bold; font-size: 11pt; color: #d9534f; text-transform: uppercase;">MINIT CURAI</div>
+                                </div>
                             </div>
-                        </div>
 
-                        <table class="minit-table">
-                            <tr>
-                                <td class="col-num">1.</td>
-                                <td class="col-label">NAMA PEGAWAI</td>
-                                <td class="col-sep">:</td>
-                                <td class="col-val" id="prev-nama">-</td>
-                            </tr>
-                            <tr>
-                                <td class="col-num">2.</td>
-                                <td class="col-label">JAWATAN</td>
-                                <td class="col-sep">:</td>
-                                <td class="col-val" id="prev-jawatan">-</td>
-                            </tr>
-                            <tr>
-                                <td class="col-num">3.</td>
-                                <td class="col-label">TAJUK / PERKARA</td>
-                                <td class="col-sep">:</td>
-                                <td class="col-val" id="prev-tajuk">-</td>
-                            </tr>
-                            <tr>
-                                <td class="col-num">4.</td>
-                                <td class="col-label">TARIKH</td>
-                                <td class="col-sep">:</td>
-                                <td class="col-val" id="prev-tarikh">-</td>
-                            </tr>
-                            <tr>
-                                <td class="col-num">5.</td>
-                                <td class="col-label">MASA</td>
-                                <td class="col-sep">:</td>
-                                <td class="col-val" id="prev-masa">-</td>
-                            </tr>
-                            <tr>
-                                <td class="col-num">6.</td>
-                                <td class="col-label">TEMPAT</td>
-                                <td class="col-sep">:</td>
-                                <td class="col-val" id="prev-tempat">-</td>
-                            </tr>
-                            <tr>
-                                <td class="col-num">7.</td>
-                                <td class="col-label">ANJURAN</td>
-                                <td class="col-sep">:</td>
-                                <td class="col-val" id="prev-anjuran">-</td>
-                            </tr>
-                            <tr>
-                                <td class="col-num">8.</td>
-                                <td class="col-label">PENGERUSI</td>
-                                <td class="col-sep">:</td>
-                                <td class="col-val" id="prev-pengerusi">-</td>
-                            </tr>
-                            <tr>
-                                <td class="col-num">9.</td>
-                                <td class="col-label">KEHADIRAN</td>
-                                <td class="col-sep">:</td>
-                                <td class="col-val" id="prev-kehadiran">-</td>
-                            </tr>
-                        </table>
+                            <table class="minit-table">
+                                <tr><td style="width: 25px; font-weight: bold;">1.</td><td style="width: 200px; font-weight: bold;">NAMA PEGAWAI</td><td style="width: 10px;">:</td><td id="p-nama">-</td></tr>
+                                <tr><td style="font-weight: bold;">2.</td><td style="font-weight: bold;">JAWATAN</td><td>:</td><td id="p-jawatan">-</td></tr>
+                                <tr><td style="font-weight: bold;">3.</td><td style="font-weight: bold;">TAJUK / PERKARA</td><td>:</td><td id="p-tajuk">-</td></tr>
+                                <tr><td style="font-weight: bold;">4.</td><td style="font-weight: bold;">TARIKH</td><td>:</td><td id="p-tarikh">-</td></tr>
+                                <tr><td style="font-weight: bold;">5.</td><td style="font-weight: bold;">MASA</td><td>:</td><td id="p-masa">-</td></tr>
+                                <tr><td style="font-weight: bold;">6.</td><td style="font-weight: bold;">TEMPAT</td><td>:</td><td id="p-tempat">-</td></tr>
+                                <tr><td style="font-weight: bold;">7.</td><td style="font-weight: bold;">ANJURAN</td><td>:</td><td id="p-anjuran">-</td></tr>
+                                <tr><td style="font-weight: bold;">8.</td><td style="font-weight: bold;">PENGERUSI</td><td>:</td><td id="p-pengerusi">-</td></tr>
+                                <tr><td style="font-weight: bold;">9.</td><td style="font-weight: bold;">KEHADIRAN</td><td>:</td><td id="p-kehadiran">-</td></tr>
+                            </table>
 
-                        <div class="section-header">10. Butiran Mesyuarat/Taklimat/Perbincangan/Kursus</div>
-                        <div class="content-box" id="prev-butiran">10.1 </div>
+                            <div class="section-header">10. Butiran Mesyuarat / Taklimat / Perbincangan / Kursus</div>
+                            <div class="content-box" id="p-butiran">10.1 </div>
 
-                        <div class="section-header">11. Implikasi Kepada SMK Kamarul Ariffin</div>
-                        <div class="content-box" id="prev-implikasi">-</div>
+                            <div class="section-header">11. Implikasi Kepada SMK Kamarul Ariffin</div>
+                            <div class="content-box" id="p-implikasi">-</div>
 
-                        <div class="section-header">12. Tindakan Susulan SMK Kamarul Ariffin</div>
-                        <div class="content-box" id="prev-tindakan">12.1 </div>
+                            <div class="section-header">12. Tindakan Susulan SMK Kamarul Ariffin</div>
+                            <div class="content-box" id="p-tindakan">12.1 </div>
 
-                        <div class="signature-section">
-                            <div class="signature-line"></div>
-                            <div class="fw-semibold">Tandatangan Pegawai</div>
-                            <div style="margin-top: 8px;">Nama: <span id="prev-sig-nama" class="fw-medium">(                        )</span></div>
-                            <div>Tarikh: <span id="prev-sig-tarikh">__________________</span></div>
+                            <div style="margin-top: 30px; page-break-inside: avoid;">
+                                <div class="signature-line"></div>
+                                <div style="font-weight: bold;">Tandatangan Pegawai</div>
+                                <div style="margin-top: 5px;">Nama: <span id="p-sig-nama">(-)</span></div>
+                                <div>Tarikh: <span id="p-sig-tarikh">__________________</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // URL Web App Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4J5L3v4oYDfTRVkfI839jBqrF24pgkjoggsW7oBS14FFDlgo3fOVqwWNA9TDCC74d/exec";
+    let senaraiDataGlobal = [];
 
-    function updatePreview() {
-        const nama = document.getElementById('namaPegawai').value || '-';
-        const jawatan = document.getElementById('jawatan').value || '-';
-        const tajuk = document.getElementById('tajuk').value || '-';
-        const tarikh = document.getElementById('tarikh').value || '-';
-        const masa = document.getElementById('masa').value || '-';
-        const tempat = document.getElementById('tempat').value || '-';
-        const anjuran = document.getElementById('anjuran').value || '-';
-        const pengerusi = document.getElementById('pengerusi').value || '-';
-        const kehadiran = document.getElementById('kehadiran').value || '-';
-        const butiran = document.getElementById('butiran').value || '';
-        const implikasi = document.getElementById('implikasi').value || '-';
-        const tindakan = document.getElementById('tindakan').value || '';
-
-        document.getElementById('prev-nama').innerText = nama;
-        document.getElementById('prev-jawatan').innerText = jawatan;
-        document.getElementById('prev-tajuk').innerText = tajuk;
-        document.getElementById('prev-tarikh').innerText = tarikh;
-        document.getElementById('prev-masa').innerText = masa;
-        document.getElementById('prev-tempat').innerText = tempat;
-        document.getElementById('prev-anjuran').innerText = anjuran;
-        document.getElementById('prev-pengerusi').innerText = pengerusi;
-        document.getElementById('prev-kehadiran').innerText = kehadiran;
-        
-        document.getElementById('prev-butiran').innerText = "10.1 " + butiran;
-        document.getElementById('prev-implikasi').innerText = implikasi;
-        document.getElementById('prev-tindakan').innerText = "12.1 " + tindakan;
-
-        document.getElementById('prev-sig-nama').innerText = "(" + nama + ")";
-        document.getElementById('prev-sig-tarikh').innerText = tarikh;
+    function toggleKekunci() {
+        const checked = document.getElementById('isKawalan').checked;
+        document.getElementById('ruangKekunci').style.display = checked ? 'block' : 'none';
     }
 
-    function saveDataToGoogleSheets() {
+    function hantarData() {
+        const isKawalan = document.getElementById('isKawalan').checked;
+        const password = document.getElementById('kawalanPassword').value;
+
+        if (isKawalan && !password) {
+            alert("Sila masukkan kata laluan untuk Minit Curai Kawalan.");
+            return;
+        }
+
         const data = {
             namaPegawai: document.getElementById('namaPegawai').value,
             jawatan: document.getElementById('jawatan').value,
@@ -385,39 +232,119 @@
             kehadiran: document.getElementById('kehadiran').value,
             butiran: document.getElementById('butiran').value,
             implikasi: document.getElementById('implikasi').value,
-            tindakan: document.getElementById('tindakan').value
+            tindakan: document.getElementById('tindakan').value,
+            statusKawalan: isKawalan ? "Kawalan" : "Biasa",
+            password: isKawalan ? password : ""
         };
 
-        if(!data.namaPegawai || !data.tajuk) {
-            alert("Sila lengkapkan maklumat utama sekurang-kurangnya Nama dan Tajuk.");
+        if(!data.namaPegawai || !data.tajuk || !data.tarikh) {
+            alert("Sila lengkapkan maklumat borang dengan betul.");
             return;
         }
 
         const btn = event.target;
         btn.disabled = true;
-        btn.innerText = "Menyimpan...";
+        btn.innerText = "Sedang Menyimpan...";
 
         fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
-        .then(response => {
-            alert("Data berjaya disimpan ke Google Sheets!");
+        .then(() => {
+            alert("Berjaya! Rekod telah disimpan ke Google Sheets.");
+            document.getElementById('minitForm').reset();
+            document.getElementById('ruangKekunci').style.display = 'none';
             btn.disabled = false;
-            btn.innerText = "Simpan ke Google Sheets";
+            btn.innerText = "Simpan Rekod ke Google Sheets";
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("Ralat semasa menyimpan data. Sila cuba lagi.");
+        .catch(err => {
+            console.error(err);
+            alert("Ralat sambungan. Sila cuba lagi.");
             btn.disabled = false;
-            btn.innerText = "Simpan ke Google Sheets";
+            btn.innerText = "Simpan Rekod ke Google Sheets";
         });
+    }
+
+    function muatSenaraiRekod() {
+        document.getElementById('statusMuat').style.display = 'block';
+        document.getElementById('tabelRekodWrapper').style.display = 'none';
+        document.getElementById('paparanDokumen').style.display = 'none';
+
+        fetch(SCRIPT_URL + "?action=getData")
+        .then(res => res.json())
+        .then(data => {
+            senaraiDataGlobal = data;
+            let tbody = document.getElementById('tabelRekodBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Tiada rekod ditemui.</td></tr>';
+            } else {
+                data.forEach((row, idx) => {
+                    let badge = row.statusKawalan === 'Kawalan' 
+                        ? '<span class="badge bg-danger">Kawalan (Rahsia)</span>' 
+                        : '<span class="badge bg-success">Biasa</span>';
+
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.tarikh || '-'}</td>
+                        <td class="fw-semibold">${row.namaPegawai}</td>
+                        <td>${row.tajuk}</td>
+                        <td>${badge}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-primary fw-semibold" onclick="bukaRekod(${idx})">Buka & Cetak</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            document.getElementById('statusMuat').style.display = 'none';
+            document.getElementById('tabelRekodWrapper').style.display = 'block';
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById('statusMuat').innerHTML = '<span class="text-danger">Gagal memuatkan rekod. Sila pastikan Google Apps Script telah di-deploy dengan versi terbaru.</span>';
+        });
+    }
+
+    function bukaRekod(idx) {
+        let r = senaraiDataGlobal[idx];
+
+        if (r.statusKawalan === 'Kawalan') {
+            let pass = prompt("Dokumen ini adalah Minit Curai Kawalan. Sila masukkan kata laluan:");
+            if (pass !== r.password) {
+                alert("Kata laluan salah!");
+                return;
+            }
+        }
+
+        document.getElementById('p-nama').innerText = r.namaPegawai || '-';
+        document.getElementById('p-jawatan').innerText = r.jawatan || '-';
+        document.getElementById('p-tajuk').innerText = r.tajuk || '-';
+        document.getElementById('p-tarikh').innerText = r.tarikh || '-';
+        document.getElementById('p-masa').innerText = r.masa || '-';
+        document.getElementById('p-tempat').innerText = r.tempat || '-';
+        document.getElementById('p-anjuran').innerText = r.anjuran || '-';
+        document.getElementById('p-pengerusi').innerText = r.pengerusi || '-';
+        document.getElementById('p-kehadiran').innerText = r.kehadiran || '-';
+        document.getElementById('p-butiran').innerText = "10.1 " + (r.butiran || '');
+        document.getElementById('p-implikasi').innerText = r.implikasi || '-';
+        document.getElementById('p-tindakan').innerText = "12.1 " + (r.tindakan || '');
+        document.getElementById('p-sig-nama').innerText = "(" + (r.namaPegawai || '') + ")";
+        document.getElementById('p-sig-tarikh').innerText = r.tarikh || '__________________';
+
+        document.getElementById('paparanDokumen').style.display = 'block';
+        document.getElementById('paparanDokumen').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function tutupDokumen() {
+        document.getElementById('paparanDokumen').style.display = 'none';
     }
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
