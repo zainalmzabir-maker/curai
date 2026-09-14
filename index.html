@@ -18,9 +18,9 @@
         .minit-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
         .minit-table td { padding: 4px; vertical-align: top; }
         .section-header { font-weight: bold; background-color: #f0f4f8; color: #1e3c72; padding: 4px 8px; margin-top: 10px; margin-bottom: 5px; border-left: 3px solid #1e3c72; font-size: 10pt; text-transform: uppercase; }
-        .content-box { min-height: 50px; white-space: pre-wrap; padding: 5px; background: #fafbfc; border: 1px solid #eee; margin-bottom: 10px; word-break: break-word; }
+        .content-box { min-height: 50px; white-space: pre-wrap; word-break: break-word; padding: 5px; background: #fafbfc; border: 1px solid #eee; margin-bottom: 10px; }
         
-        /* Signature Canvas Styling */
+        /* Signature Canvas & Container */
         .sig-canvas { border: 1px dashed #999; background: #fff; width: 100%; height: 120px; touch-action: none; border-radius: 4px; }
         .signature-container { display: flex; justify-content: space-between; margin-top: 30px; page-break-inside: avoid; gap: 20px; }
         .signature-box { width: 48%; }
@@ -164,7 +164,7 @@
                 <!-- Paparan Dokumen A4 untuk Cetakan & Pengesahan Pelulus -->
                 <div id="paparanDokumen" style="display: none;" class="mt-4 pt-4 border-top">
                     
-                    <!-- Ruang Pengesahan Pelulus (Hanya pada Menu Cetakan) -->
+                    <!-- Ruang Pengesahan Pelulus -->
                     <div class="card bg-light p-3 mb-4 no-print border-primary">
                         <h5 class="fw-bold text-primary mb-3">Ruang Pengesahan / Pelulus (Diisi Semasa Cetakan)</h5>
                         <div class="row">
@@ -222,7 +222,7 @@
                             <div class="section-header">12. Tindakan Susulan SMK Kamarul Ariffin</div>
                             <div class="content-box" id="p-tindakan"></div>
 
-                            <!-- Bahagian Tandatangan Berpasangan (Penulis di Kiri, Pengesah di Kanan) -->
+                            <!-- Bahagian Tandatangan Berpasangan -->
                             <div class="signature-container">
                                 <!-- Kiri: Penulis -->
                                 <div class="signature-box">
@@ -311,7 +311,6 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // Inisialisasi canvas apabila laman dimuatkan
     window.addEventListener('DOMContentLoaded', () => {
         initCanvas('writerCanvas');
         initCanvas('approverCanvas');
@@ -390,7 +389,7 @@
         fetch(SHEET_CSV_URL)
         .then(res => res.text())
         .then(csvText => {
-            let rows = parseCSV(csvText);
+            let rows = parseCSVAdvanced(csvText);
             senaraiDataGlobal = [];
             let tbody = document.getElementById('tabelRekodBody');
             tbody.innerHTML = '';
@@ -413,8 +412,8 @@
                         implikasi: r[11],
                         tindakan: r[12],
                         signature: r[13] || "",
-                        statusKawalan: r[14] || "Biasa",
-                        password: r[15] || ""
+                        statusKawalan: (r[14] || "Biasa").trim(),
+                        password: (r[15] || "").trim()
                     };
                     senaraiDataGlobal.push(record);
                 }
@@ -424,7 +423,7 @@
                 tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Tiada rekod ditemui.</td></tr>';
             } else {
                 senaraiDataGlobal.forEach((row, idx) => {
-                    let badge = row.statusKawalan.trim() === 'Kawalan' 
+                    let badge = row.statusKawalan === 'Kawalan' 
                         ? '<span class="badge bg-danger">Kawalan (Rahsia)</span>' 
                         : '<span class="badge bg-success">Biasa</span>';
 
@@ -451,37 +450,64 @@
         });
     }
 
-    function parseCSV(text) {
-        let lines = text.split("\n");
-        let result = [];
-        for (let i = 0; i < lines.length; i++) {
-            if (!lines[i].trim()) continue;
-            let row = [];
-            let inQuotes = false;
-            let current = "";
-            for (let char of lines[i]) {
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === ',' && !inQuotes) {
-                    row.push(current.trim());
-                    current = "";
+    // Parser CSV Lanjutan yang menyokong Multi-line Text & Quotes
+    function parseCSVAdvanced(text) {
+        let rows = [];
+        let currentRow = [];
+        let currentField = "";
+        let insideQuotes = false;
+        
+        for (let i = 0; i < text.length; i++) {
+            let c = text[i];
+            let nextC = text[i+1];
+            
+            if (insideQuotes) {
+                if (c === '"') {
+                    if (nextC === '"') {
+                        currentField += '"';
+                        i++;
+                    } else {
+                        insideQuotes = false;
+                    }
                 } else {
-                    current += char;
+                    currentField += c;
+                }
+            } else {
+                if (c === '"') {
+                    insideQuotes = true;
+                } else if (c === ',') {
+                    currentRow.push(currentField);
+                    currentField = "";
+                } else if (c === '\r' && nextC === '\n') {
+                    currentRow.push(currentField);
+                    rows.push(currentRow);
+                    currentRow = [];
+                    currentField = "";
+                    i++;
+                } else if (c === '\n' || c === '\r') {
+                    currentRow.push(currentField);
+                    rows.push(currentRow);
+                    currentRow = [];
+                    currentField = "";
+                } else {
+                    currentField += c;
                 }
             }
-            row.push(current.trim());
-            result.push(row);
         }
-        return result;
+        if (currentField !== "" || currentRow.length > 0) {
+            currentRow.push(currentField);
+            rows.push(currentRow);
+        }
+        return rows;
     }
 
     function bukaRekod(idx) {
         let r = senaraiDataGlobal[idx];
 
-        if (r.statusKawalan.trim() === 'Kawalan') {
-            let pass = prompt("Dokumen ini adalah Minit Curai Kawalan. Sila masukkan kata laluan:");
-            if (pass !== r.password.trim()) {
-                alert("Kata laluan salah!");
+        if (r.statusKawalan === 'Kawalan') {
+            let pass = prompt("Dokumen ini adalah Minit Curai Kawalan (Rahsia). Sila masukkan kata laluan:");
+            if (pass !== r.password) {
+                alert("Kata laluan salah! Akses ditolak.");
                 return;
             }
         }
@@ -496,7 +522,6 @@
         document.getElementById('p-pengerusi').innerText = r.pengerusi || '-';
         document.getElementById('p-kehadiran').innerText = r.kehadiran || '-';
         
-        // Memasukkan data mentah tanpa teks sesat seperti 10.1 atau 12.1
         document.getElementById('p-butiran').innerText = r.butiran || '-';
         document.getElementById('p-implikasi').innerText = r.implikasi || '-';
         document.getElementById('p-tindakan').innerText = r.tindakan || '-';
@@ -505,7 +530,6 @@
         document.getElementById('p-sig-jawatan').innerText = r.jawatan || '-';
         document.getElementById('p-sig-tarikh').innerText = r.tarikh || '__________________';
 
-        // Papar tandatangan digital penulis jika ada
         let writerSigArea = document.getElementById('p-writer-sig-area');
         if (r.signature && r.signature.startsWith('data:image')) {
             writerSigArea.innerHTML = `<img src="${r.signature}" class="sig-img" alt="Tandatangan Penulis">`;
@@ -513,7 +537,6 @@
             writerSigArea.innerHTML = `<div style="height: 50px;"></div>`;
         }
 
-        // Reset ruang pengesah
         document.getElementById('approverName').value = '';
         document.getElementById('approverJawatan').value = '';
         clearSig('approverCanvas');
@@ -533,7 +556,6 @@
         document.getElementById('p-app-jawatan').innerText = jawatan || '__________________';
         document.getElementById('p-app-tarikh').innerText = new Date().toLocaleDateString('ms-MY');
 
-        // Semak sama ada canvas pengesah telah ditandatangani
         const blank = document.createElement('canvas');
         blank.width = canvas.width;
         blank.height = canvas.height;
