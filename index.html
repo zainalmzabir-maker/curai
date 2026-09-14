@@ -103,7 +103,7 @@
                         <textarea class="form-control" id="tindakan" rows="3" required></textarea>
                     </div>
 
-                    <!-- Bahagian Minit Curai Kawalan / Rahsia -->
+                    <!-- Minit Curai Kawalan / Rahsia -->
                     <div class="p-3 bg-light border rounded mb-4">
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" id="isKawalan" onchange="toggleKekunci()">
@@ -137,7 +137,7 @@
                     <table class="table table-striped align-middle">
                         <thead class="table-dark">
                             <tr>
-                                <th>Tarikh</th>
+                                <th>Tarikh Mohon</th>
                                 <th>Nama Pegawai</th>
                                 <th>Tajuk / Perkara</th>
                                 <th>Status</th>
@@ -204,6 +204,7 @@
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4J5L3v4oYDfTRVkfI839jBqrF24pgkjoggsW7oBS14FFDlgo3fOVqwWNA9TDCC74d/exec";
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1H3J_6o_kHHZqwlSy7pAlYxX_KdCAILxsYErnnNIU-JA/export?format=csv";
     let senaraiDataGlobal = [];
 
     function toggleKekunci() {
@@ -272,18 +273,44 @@
         document.getElementById('tabelRekodWrapper').style.display = 'none';
         document.getElementById('paparanDokumen').style.display = 'none';
 
-        fetch(SCRIPT_URL + "?action=getData")
-        .then(res => res.json())
-        .then(data => {
-            senaraiDataGlobal = data;
+        fetch(SHEET_CSV_URL)
+        .then(res => res.text())
+        .then(csvText => {
+            let rows = parseCSV(csvText);
+            senaraiDataGlobal = [];
             let tbody = document.getElementById('tabelRekodBody');
             tbody.innerHTML = '';
 
-            if (data.length === 0) {
+            // Abaikan baris header (i = 1)
+            for (let i = 1; i < rows.length; i++) {
+                let r = rows[i];
+                if (r && r.length >= 2 && r[1]) {
+                    let record = {
+                        timestamp: r[0],
+                        namaPegawai: r[1],
+                        jawatan: r[2],
+                        tajuk: r[3],
+                        tarikh: r[4],
+                        masa: r[5],
+                        tempat: r[6],
+                        anjuran: r[7],
+                        pengerusi: r[8],
+                        kehadiran: r[9],
+                        butiran: r[10],
+                        implikasi: r[11],
+                        tindakan: r[12],
+                        statusKawalan: r[13] || "Biasa",
+                        password: r[14] || ""
+                    };
+                    senaraiDataGlobal.push(record);
+                }
+            }
+
+            if (senaraiDataGlobal.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">Tiada rekod ditemui.</td></tr>';
             } else {
-                data.forEach((row, idx) => {
-                    let badge = row.statusKawalan === 'Kawalan' 
+                senaraiDataGlobal.forEach((row, idx) => {
+                    let badge = row.statusKawalan.trim() === 'Kawalan' 
                         ? '<span class="badge bg-danger">Kawalan (Rahsia)</span>' 
                         : '<span class="badge bg-success">Biasa</span>';
 
@@ -306,16 +333,41 @@
         })
         .catch(err => {
             console.error(err);
-            document.getElementById('statusMuat').innerHTML = '<span class="text-danger">Gagal memuatkan rekod. Sila pastikan Google Apps Script telah di-deploy dengan versi terbaru.</span>';
+            document.getElementById('statusMuat').innerHTML = '<span class="text-danger">Gagal memuatkan rekod. Sila pastikan Google Sheet telah di-Publish to Web (CSV).</span>';
         });
+    }
+
+    // Fungsi pembantu untuk parsing fail CSV dengan selamat
+    function parseCSV(text) {
+        let lines = text.split("\n");
+        let result = [];
+        for (let i = 0; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
+            let row = [];
+            let inQuotes = false;
+            let current = "";
+            for (let char of lines[i]) {
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    row.push(current.trim());
+                    current = "";
+                } else {
+                    current += char;
+                }
+            }
+            row.push(current.trim());
+            result.push(row);
+        }
+        return result;
     }
 
     function bukaRekod(idx) {
         let r = senaraiDataGlobal[idx];
 
-        if (r.statusKawalan === 'Kawalan') {
+        if (r.statusKawalan.trim() === 'Kawalan') {
             let pass = prompt("Dokumen ini adalah Minit Curai Kawalan. Sila masukkan kata laluan:");
-            if (pass !== r.password) {
+            if (pass !== r.password.trim()) {
                 alert("Kata laluan salah!");
                 return;
             }
