@@ -18,9 +18,15 @@
         .minit-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
         .minit-table td { padding: 4px; vertical-align: top; }
         .section-header { font-weight: bold; background-color: #f0f4f8; color: #1e3c72; padding: 4px 8px; margin-top: 10px; margin-bottom: 5px; border-left: 3px solid #1e3c72; font-size: 10pt; text-transform: uppercase; }
-        .content-box { min-height: 50px; white-space: pre-wrap; padding: 5px; background: #fafbfc; border: 1px solid #eee; margin-bottom: 10px; }
-        .signature-line { border-top: 1px solid #333; width: 200px; margin-top: 30px; margin-bottom: 5px; }
+        .content-box { min-height: 50px; white-space: pre-wrap; padding: 5px; background: #fafbfc; border: 1px solid #eee; margin-bottom: 10px; word-break: break-word; }
         
+        /* Signature Canvas Styling */
+        .sig-canvas { border: 1px dashed #999; background: #fff; width: 100%; height: 120px; touch-action: none; border-radius: 4px; }
+        .signature-container { display: flex; justify-content: space-between; margin-top: 30px; page-break-inside: avoid; gap: 20px; }
+        .signature-box { width: 48%; }
+        .sig-line { border-top: 1px solid #333; margin-top: 40px; margin-bottom: 5px; }
+        .sig-img { max-height: 50px; max-width: 150px; display: block; margin-bottom: 2px; }
+
         @media print {
             body * { visibility: hidden; }
             .a4-page, .a4-page * { visibility: visible; }
@@ -39,10 +45,10 @@
     <!-- Menu Tab -->
     <ul class="nav nav-pills justify-content-center mb-4 no-print" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active fw-bold px-4" id="tab-pengisian-btn" data-bs-toggle="pill" data-bs-target="#tab-pengisian" type="button">1. Pengisian</button>
+            <button class="nav-link active fw-bold px-4" data-bs-toggle="pill" data-bs-target="#tab-pengisian" type="button">1. Pengisian</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link fw-bold px-4" id="tab-cetakan-btn" data-bs-toggle="pill" data-bs-target="#tab-cetakan" type="button" onclick="muatSenaraiRekod()">2. Cetakan & Senarai Rekod</button>
+            <button class="nav-link fw-bold px-4" data-bs-toggle="pill" data-bs-target="#tab-cetakan" type="button" onclick="muatSenaraiRekod()">2. Cetakan & Senarai Rekod</button>
         </li>
     </ul>
 
@@ -103,6 +109,13 @@
                         <textarea class="form-control" id="tindakan" rows="3" required></textarea>
                     </div>
 
+                    <!-- Tandatangan Digital Penulis -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tandatangan Digital Penulis (Scribble / Lukis di sini):</label>
+                        <canvas id="writerCanvas" class="sig-canvas"></canvas>
+                        <button type="button" class="btn btn-sm btn-outline-secondary mt-1" onclick="clearSig('writerCanvas')">Padam Tandatangan</button>
+                    </div>
+
                     <!-- Minit Curai Kawalan / Rahsia -->
                     <div class="p-3 bg-light border rounded mb-4">
                         <div class="form-check form-switch mb-2">
@@ -148,13 +161,35 @@
                     </table>
                 </div>
 
-                <!-- Paparan Dokumen A4 untuk Cetakan -->
+                <!-- Paparan Dokumen A4 untuk Cetakan & Pengesahan Pelulus -->
                 <div id="paparanDokumen" style="display: none;" class="mt-4 pt-4 border-top">
+                    
+                    <!-- Ruang Pengesahan Pelulus (Hanya pada Menu Cetakan) -->
+                    <div class="card bg-light p-3 mb-4 no-print border-primary">
+                        <h5 class="fw-bold text-primary mb-3">Ruang Pengesahan / Pelulus (Diisi Semasa Cetakan)</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label small fw-semibold">Nama Pengesah / Pelulus</label>
+                                <input type="text" class="form-control form-control-sm" id="approverName" placeholder="Cth: Pengetua / PK Pentadbiran" oninput="updateApproverPreview()">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label small fw-semibold">Jawatan Pengesah</label>
+                                <input type="text" class="form-control form-control-sm" id="approverJawatan" placeholder="Cth: Pengetua SMKKA" oninput="updateApproverPreview()">
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Tandatangan Pengesah (Scribble):</label>
+                            <canvas id="approverCanvas" class="sig-canvas" style="height: 90px;"></canvas>
+                            <button type="button" class="btn btn-xs btn-outline-secondary mt-1" onclick="clearSig('approverCanvas'); updateApproverPreview();">Padam Tandatangan Pelulus</button>
+                        </div>
+                    </div>
+
                     <div class="text-end mb-3 no-print">
                         <button class="btn btn-primary fw-semibold" onclick="window.print()">Cetak / Simpan PDF (A4)</button>
                         <button class="btn btn-secondary fw-semibold" onclick="tutupDokumen()">Tutup</button>
                     </div>
 
+                    <!-- Dokumen A4 Rasmi -->
                     <div class="d-flex justify-content-center">
                         <div class="a4-page">
                             <div class="report-header">
@@ -179,20 +214,36 @@
                             </table>
 
                             <div class="section-header">10. Butiran Mesyuarat / Taklimat / Perbincangan / Kursus</div>
-                            <div class="content-box" id="p-butiran">10.1 </div>
+                            <div class="content-box" id="p-butiran"></div>
 
                             <div class="section-header">11. Implikasi Kepada SMK Kamarul Ariffin</div>
-                            <div class="content-box" id="p-implikasi">-</div>
+                            <div class="content-box" id="p-implikasi"></div>
 
                             <div class="section-header">12. Tindakan Susulan SMK Kamarul Ariffin</div>
-                            <div class="content-box" id="p-tindakan">12.1 </div>
+                            <div class="content-box" id="p-tindakan"></div>
 
-                            <div style="margin-top: 30px; page-break-inside: avoid;">
-                                <div class="signature-line"></div>
-                                <div style="font-weight: bold;">Tandatangan Pegawai</div>
-                                <div style="margin-top: 5px;">Nama: <span id="p-sig-nama">(-)</span></div>
-                                <div>Tarikh: <span id="p-sig-tarikh">__________________</span></div>
+                            <!-- Bahagian Tandatangan Berpasangan (Penulis di Kiri, Pengesah di Kanan) -->
+                            <div class="signature-container">
+                                <!-- Kiri: Penulis -->
+                                <div class="signature-box">
+                                    <div id="p-writer-sig-area"></div>
+                                    <div class="sig-line"></div>
+                                    <div style="font-weight: bold; font-size: 10pt;">Tandatangan Pegawai</div>
+                                    <div style="font-size: 9pt;">Nama: <span id="p-sig-nama">(-)</span></div>
+                                    <div style="font-size: 9pt;">Jawatan: <span id="p-sig-jawatan">(-)</span></div>
+                                    <div style="font-size: 9pt;">Tarikh: <span id="p-sig-tarikh">__________________</span></div>
+                                </div>
+                                <!-- Kanan: Pengesah / Pelulus -->
+                                <div class="signature-box">
+                                    <div id="p-approver-sig-area"></div>
+                                    <div class="sig-line"></div>
+                                    <div style="font-weight: bold; font-size: 10pt;">Disahkan oleh,</div>
+                                    <div style="font-size: 9pt;">Nama: <span id="p-app-nama">__________________</span></div>
+                                    <div style="font-size: 9pt;">Jawatan: <span id="p-app-jawatan">__________________</span></div>
+                                    <div style="font-size: 9pt;">Tarikh: <span id="p-app-tarikh">__________________</span></div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -207,6 +258,65 @@
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1H3J_6o_kHHZqwlSy7pAlYxX_KdCAILxsYErnnNIU-JA/export?format=csv";
     let senaraiDataGlobal = [];
 
+    // Setup Signature Pad Canvas
+    function initCanvas(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext('2d');
+        let painting = false;
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function start(e) {
+            painting = true;
+            draw(e);
+        }
+        function end() {
+            painting = false;
+            ctx.beginPath();
+        }
+        function draw(e) {
+            if (!painting) return;
+            e.preventDefault();
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#000';
+
+            const pos = getPos(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        canvas.addEventListener('mousedown', start);
+        canvas.addEventListener('mouseup', end);
+        canvas.addEventListener('mousemove', draw);
+
+        canvas.addEventListener('touchstart', start, { passive: false });
+        canvas.addEventListener('touchend', end);
+        canvas.addEventListener('touchmove', draw, { passive: false });
+    }
+
+    function clearSig(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Inisialisasi canvas apabila laman dimuatkan
+    window.addEventListener('DOMContentLoaded', () => {
+        initCanvas('writerCanvas');
+        initCanvas('approverCanvas');
+    });
+
     function toggleKekunci() {
         const checked = document.getElementById('isKawalan').checked;
         document.getElementById('ruangKekunci').style.display = checked ? 'block' : 'none';
@@ -215,6 +325,8 @@
     function hantarData() {
         const isKawalan = document.getElementById('isKawalan').checked;
         const password = document.getElementById('kawalanPassword').value;
+        const writerCanvas = document.getElementById('writerCanvas');
+        const signatureBase64 = writerCanvas.toDataURL('image/png');
 
         if (isKawalan && !password) {
             alert("Sila masukkan kata laluan untuk Minit Curai Kawalan.");
@@ -234,6 +346,7 @@
             butiran: document.getElementById('butiran').value,
             implikasi: document.getElementById('implikasi').value,
             tindakan: document.getElementById('tindakan').value,
+            signature: signatureBase64,
             statusKawalan: isKawalan ? "Kawalan" : "Biasa",
             password: isKawalan ? password : ""
         };
@@ -256,6 +369,7 @@
         .then(() => {
             alert("Berjaya! Rekod telah disimpan ke Google Sheets.");
             document.getElementById('minitForm').reset();
+            clearSig('writerCanvas');
             document.getElementById('ruangKekunci').style.display = 'none';
             btn.disabled = false;
             btn.innerText = "Simpan Rekod ke Google Sheets";
@@ -281,7 +395,6 @@
             let tbody = document.getElementById('tabelRekodBody');
             tbody.innerHTML = '';
 
-            // Abaikan baris header (i = 1)
             for (let i = 1; i < rows.length; i++) {
                 let r = rows[i];
                 if (r && r.length >= 2 && r[1]) {
@@ -299,8 +412,9 @@
                         butiran: r[10],
                         implikasi: r[11],
                         tindakan: r[12],
-                        statusKawalan: r[13] || "Biasa",
-                        password: r[14] || ""
+                        signature: r[13] || "",
+                        statusKawalan: r[14] || "Biasa",
+                        password: r[15] || ""
                     };
                     senaraiDataGlobal.push(record);
                 }
@@ -337,7 +451,6 @@
         });
     }
 
-    // Fungsi pembantu untuk parsing fail CSV dengan selamat
     function parseCSV(text) {
         let lines = text.split("\n");
         let result = [];
@@ -382,14 +495,54 @@
         document.getElementById('p-anjuran').innerText = r.anjuran || '-';
         document.getElementById('p-pengerusi').innerText = r.pengerusi || '-';
         document.getElementById('p-kehadiran').innerText = r.kehadiran || '-';
-        document.getElementById('p-butiran').innerText = "10.1 " + (r.butiran || '');
+        
+        // Memasukkan data mentah tanpa teks sesat seperti 10.1 atau 12.1
+        document.getElementById('p-butiran').innerText = r.butiran || '-';
         document.getElementById('p-implikasi').innerText = r.implikasi || '-';
-        document.getElementById('p-tindakan').innerText = "12.1 " + (r.tindakan || '');
-        document.getElementById('p-sig-nama').innerText = "(" + (r.namaPegawai || '') + ")";
+        document.getElementById('p-tindakan').innerText = r.tindakan || '-';
+
+        document.getElementById('p-sig-nama').innerText = r.namaPegawai || '-';
+        document.getElementById('p-sig-jawatan').innerText = r.jawatan || '-';
         document.getElementById('p-sig-tarikh').innerText = r.tarikh || '__________________';
+
+        // Papar tandatangan digital penulis jika ada
+        let writerSigArea = document.getElementById('p-writer-sig-area');
+        if (r.signature && r.signature.startsWith('data:image')) {
+            writerSigArea.innerHTML = `<img src="${r.signature}" class="sig-img" alt="Tandatangan Penulis">`;
+        } else {
+            writerSigArea.innerHTML = `<div style="height: 50px;"></div>`;
+        }
+
+        // Reset ruang pengesah
+        document.getElementById('approverName').value = '';
+        document.getElementById('approverJawatan').value = '';
+        clearSig('approverCanvas');
+        updateApproverPreview();
 
         document.getElementById('paparanDokumen').style.display = 'block';
         document.getElementById('paparanDokumen').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function updateApproverPreview() {
+        const name = document.getElementById('approverName').value;
+        const jawatan = document.getElementById('approverJawatan').value;
+        const canvas = document.getElementById('approverCanvas');
+        const sigArea = document.getElementById('p-approver-sig-area');
+
+        document.getElementById('p-app-nama').innerText = name || '__________________';
+        document.getElementById('p-app-jawatan').innerText = jawatan || '__________________';
+        document.getElementById('p-app-tarikh').innerText = new Date().toLocaleDateString('ms-MY');
+
+        // Semak sama ada canvas pengesah telah ditandatangani
+        const blank = document.createElement('canvas');
+        blank.width = canvas.width;
+        blank.height = canvas.height;
+
+        if (canvas.toDataURL() !== blank.toDataURL() && name) {
+            sigArea.innerHTML = `<img src="${canvas.toDataURL('image/png')}" class="sig-img" alt="Tandatangan Pengesah">`;
+        } else {
+            sigArea.innerHTML = `<div style="height: 50px;"></div>`;
+        }
     }
 
     function tutupDokumen() {
