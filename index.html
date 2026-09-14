@@ -4,97 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Minit Curai SMK Kamarul Ariffin</title>
+    <!-- Google Fonts: Barlow -->
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f0f2f5;
-            font-family: 'Times New Roman', Times, serif, Arial, sans-serif;
+            background-color: #f4f7f6;
+            font-family: 'Barlow', sans-serif;
+            color: #333;
         }
         .app-container {
-            max-width: 1200px;
+            max-width: 1250px;
             margin: 30px auto;
             padding: 20px;
         }
         .form-card, .preview-card {
             background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            padding: 25px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            padding: 30px;
+            margin-bottom: 25px;
+            border-top: 4px solid #1e3c72;
         }
+        
         /* A4 Preview Styling */
         .a4-page {
             width: 210mm;
             min-height: 297mm;
-            padding: 20mm;
+            padding: 15mm 20mm;
             margin: 0 auto;
             background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
             box-sizing: border-box;
-            font-size: 12pt;
-            color: #000;
-            line-height: 1.5;
+            font-size: 11pt;
+            color: #111;
+            line-height: 1.4;
+            font-family: 'Barlow', sans-serif;
+        }
+
+        /* Grafik Header Laporan */
+        .report-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 3px double #1e3c72;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .school-logo {
+            width: 75px;
+            height: 75px;
+            object-fit: contain;
+            margin-right: 15px;
+        }
+        .header-text {
+            flex-grow: 1;
+            text-align: center;
+        }
+        .kpm-sub {
+            font-size: 9pt;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .document-title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 16pt;
-            margin-bottom: 5px;
+            font-weight: 700;
+            font-size: 14pt;
+            color: #1e3c72;
+            margin: 2px 0;
             text-transform: uppercase;
         }
         .document-subtitle {
-            text-align: center;
-            font-weight: bold;
-            font-size: 14pt;
-            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 12pt;
+            color: #d9534f;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
         .minit-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 15px;
         }
         .minit-table td {
-            padding: 6px 4px;
+            padding: 5px 4px;
             vertical-align: top;
         }
         .col-num {
-            width: 30px;
-            font-weight: bold;
+            width: 25px;
+            font-weight: 600;
+            color: #1e3c72;
         }
         .col-label {
-            width: 220px;
-            font-weight: bold;
+            width: 210px;
+            font-weight: 600;
         }
         .col-sep {
             width: 15px;
             text-align: center;
-            font-weight: bold;
+            font-weight: 600;
         }
         .col-val {
             word-break: break-word;
+            font-weight: 400;
         }
         .section-header {
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 11pt;
+            background-color: #f0f4f8;
+            color: #1e3c72;
+            padding: 5px 8px;
             margin-top: 15px;
             margin-bottom: 5px;
+            border-left: 4px solid #1e3c72;
+            text-transform: uppercase;
         }
         .content-box {
-            min-height: 80px;
+            min-height: 60px;
             white-space: pre-wrap;
-            margin-bottom: 15px;
-            padding-left: 5px;
+            margin-bottom: 10px;
+            padding: 5px 8px;
+            background-color: #fafbfc;
+            border: 1px solid #eee;
+            border-radius: 4px;
         }
         .signature-section {
-            margin-top: 40px;
+            margin-top: 35px;
             page-break-inside: avoid;
         }
         .signature-line {
-            border-top: 1px solid #000;
-            width: 250px;
-            margin-top: 50px;
+            border-top: 1px solid #333;
+            width: 220px;
+            margin-top: 40px;
             margin-bottom: 5px;
         }
+        
         @media print {
             body * {
                 visibility: hidden;
@@ -122,8 +167,8 @@
 <div class="container app-container">
     <div class="row no-print">
         <div class="col-12 text-center mb-4">
-            <h2>Sistem Pengurusan Minit Curai</h2>
-            <p class="text-muted">SMK Kamarul Ariffin | Pangkalan Data Google Sheets & GitHub Pages</p>
+            <h2 class="fw-bold text-primary">Sistem Pengurusan Minit Curai</h2>
+            <p class="text-muted">SMK Kamarul Ariffin | Pangkalan Data Google Sheets & Paparan Moden Barlow</p>
         </div>
     </div>
 
@@ -131,62 +176,62 @@
         <!-- Borang Pengisian -->
         <div class="col-lg-6 no-print">
             <div class="form-card">
-                <h4 class="mb-3">Borang Pengisian Minit Curai</h4>
+                <h4 class="mb-4 fw-bold text-dark">Borang Pengisian Minit Curai</h4>
                 <form id="minitForm">
                     <div class="mb-3">
-                        <label class="form-label">Nama Pegawai</label>
+                        <label class="form-label fw-semibold">Nama Pegawai</label>
                         <input type="text" class="form-control" id="namaPegawai" required oninput="updatePreview()">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Jawatan</label>
+                        <label class="form-label fw-semibold">Jawatan</label>
                         <input type="text" class="form-control" id="jawatan" required oninput="updatePreview()">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Tajuk / Perkara</label>
+                        <label class="form-label fw-semibold">Tajuk / Perkara</label>
                         <input type="text" class="form-control" id="tajuk" required oninput="updatePreview()">
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Tarikh</label>
+                            <label class="form-label fw-semibold">Tarikh</label>
                             <input type="date" class="form-control" id="tarikh" required oninput="updatePreview()">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Masa</label>
+                            <label class="form-label fw-semibold">Masa</label>
                             <input type="text" class="form-control" id="masa" placeholder="Cth: 8.00 pagi - 5.00 petang" required oninput="updatePreview()">
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Tempat</label>
+                        <label class="form-label fw-semibold">Tempat</label>
                         <input type="text" class="form-control" id="tempat" required oninput="updatePreview()">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Anjuran</label>
+                        <label class="form-label fw-semibold">Anjuran</label>
                         <input type="text" class="form-control" id="anjuran" required oninput="updatePreview()">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Pengerusi</label>
+                        <label class="form-label fw-semibold">Pengerusi</label>
                         <input type="text" class="form-control" id="pengerusi" required oninput="updatePreview()">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Kehadiran</label>
+                        <label class="form-label fw-semibold">Kehadiran</label>
                         <input type="text" class="form-control" id="kehadiran" placeholder="Cth: Rujuk senarai / Semua pegawai berkenaan" required oninput="updatePreview()">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">10. Butiran Mesyuarat / Taklimat / Perbincangan / Kursus</label>
-                        <textarea class="form-control" id="butiran" rows="5" required oninput="updatePreview()"></textarea>
+                        <label class="form-label fw-semibold">10. Butiran Mesyuarat / Taklimat / Perbincangan / Kursus</label>
+                        <textarea class="form-control" id="butiran" rows="4" required oninput="updatePreview()"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">11. Implikasi Kepada SMK Kamarul Ariffin</label>
+                        <label class="form-label fw-semibold">11. Implikasi Kepada SMK Kamarul Ariffin</label>
                         <textarea class="form-control" id="implikasi" rows="3" required oninput="updatePreview()"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">12. Tindakan Susulan SMK Kamarul Ariffin</label>
+                        <label class="form-label fw-semibold">12. Tindakan Susulan SMK Kamarul Ariffin</label>
                         <textarea class="form-control" id="tindakan" rows="3" required oninput="updatePreview()"></textarea>
                     </div>
                     
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="button" class="btn btn-success me-md-2" onclick="saveDataToGoogleSheets()">Simpan ke Google Sheets</button>
-                        <button type="button" class="btn btn-primary" onclick="window.print()">Cetak / Simpan PDF (A4)</button>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <button type="button" class="btn btn-success px-4 me-md-2 fw-semibold" onclick="saveDataToGoogleSheets()">Simpan ke Google Sheets</button>
+                        <button type="button" class="btn btn-primary px-4 fw-semibold" onclick="window.print()">Cetak / Simpan PDF (A4)</button>
                     </div>
                 </form>
             </div>
@@ -195,15 +240,22 @@
         <!-- Paparan A4 (Live Preview & Print) -->
         <div class="col-lg-6">
             <div class="preview-card p-0 overflow-auto">
-                <div class="p-3 bg-secondary text-white no-print d-flex justify-content-between align-items-center">
-                    <span>Pratonton Dokumen A4</span>
-                    <button class="btn btn-light btn-sm" onclick="window.print()">Cetak A4</button>
+                <div class="p-3 bg-dark text-white no-print d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">Pratonton Dokumen A4 Rasmi</span>
+                    <button class="btn btn-light btn-sm fw-semibold" onclick="window.print()">Cetak A4</button>
                 </div>
                 
-                <div class="p-4">
+                <div class="p-4 bg-light">
                     <div class="a4-page" id="printArea">
-                        <div class="document-title">SEKOLAH MENENGAH KEBANGSAAN KAMARUL ARIFFIN</div>
-                        <div class="document-subtitle">MINIT CURAI</div>
+                        <!-- Grafik Header Rasmi Sekolah -->
+                        <div class="report-header">
+                            <img src="https://i.ibb.co/3m3v92c/crest-placeholder.png" alt="Logo Sekolah" class="school-logo" onerror="this.src='https://via.placeholder.com/75?text=SMKKA'">
+                            <div class="header-text">
+                                <div class="kpm-sub">Kementerian Pendidikan Malaysia</div>
+                                <div class="document-title">Sekolah Menengah Kebangsaan Kamarul Ariffin</div>
+                                <div class="document-subtitle">Minit Curai Rasmi</div>
+                            </div>
+                        </div>
 
                         <table class="minit-table">
                             <tr>
@@ -273,8 +325,8 @@
 
                         <div class="signature-section">
                             <div class="signature-line"></div>
-                            <div>Tandatangan Pegawai</div>
-                            <div style="margin-top: 10px;">Nama: <span id="prev-sig-nama">(                        )</span></div>
+                            <div class="fw-semibold">Tandatangan Pegawai</div>
+                            <div style="margin-top: 8px;">Nama: <span id="prev-sig-nama" class="fw-medium">(                        )</span></div>
                             <div>Tarikh: <span id="prev-sig-tarikh">__________________</span></div>
                         </div>
                     </div>
@@ -285,7 +337,7 @@
 </div>
 
 <script>
-    // URL Web App Google Apps Script yang dikemaskini
+    // URL Web App Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby4J5L3v4oYDfTRVkfI839jBqrF24pgkjoggsW7oBS14FFDlgo3fOVqwWNA9TDCC74d/exec";
 
     function updatePreview() {
